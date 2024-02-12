@@ -1,32 +1,32 @@
-const express=require('express');
+const express = require("express");
 
-const router=express.Router();
+const router = express.Router();
 const {
-    refreshToken,
-    accessToken,
-  } = require("../../../../middleware/doctorAuth");
-const { doctorController } = require('../../../../controllers');
+  refreshToken,
+  accessToken,
+} = require("../../../../middleware/doctorAuth");
+const { doctorController, authController } = require("../../../../controllers");
+const { singleFileUpload } = require("../../../../helpers/upload");
 
+router.post("/create-doctor", authController.register);
 
-router.post('/create-doctor',
-doctorController.register);
+router.post("/login", authController.login);
 
+router.post("/forgotpass", authController.forgotPass);
 
-router.post('/login',
-doctorController.login);
-
-router.post('/forgotpass',
-doctorController.forgotPass);
-
-router.post('/verify-otp',
-doctorController.verifyOtp);
-
+router.post("/verify-otp", authController.verifyOtp);
 
 router.put(
-    "/resetPassword",
-    //  accessToken(),
-    doctorController.resetPassword
-  );
+  "/resetPassword",
+  //  accessToken(),
+  authController.resetPassword
+);
+
+router.put(
+  "/update-doctor-profile",
+  singleFileUpload("/doctorImg", "image"),
+  doctorController.updateDocProfile
+);
 // router.get('/list',accessToken(),
 // petController.getPetsList);
 
@@ -43,5 +43,4 @@ router.put(
 
 // router.put("/updatePetStatus/:id",petController.updatePetStatus);
 
-
-module.exports=router;
+module.exports = router;

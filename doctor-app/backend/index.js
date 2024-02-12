@@ -58,8 +58,13 @@ app.use(express.static(path.resolve(__dirname, `./src/views`)));
 
 app.use("/v1", routes);
 app.use(
-  "/profile",
-  express.static(path.join(__dirname, "./src/public/profile_images"))
+  "/public/docotrImg",
+  express.static(path.join(__dirname, "./src/public/docotrImg"))
+);
+
+app.use(
+  "/public/countryflag",
+  express.static(path.join(__dirname, "./src/public/countryflag"))
 );
 
 app.use(express.static(path.resolve("./src/views/index.html")));

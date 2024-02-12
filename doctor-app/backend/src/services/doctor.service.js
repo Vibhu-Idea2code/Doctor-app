@@ -21,7 +21,16 @@ const findDoctorByPhone = async (phoneNumber) => {
   const updatePassword = async (doctorId, newPassword) => {
     return Doctor.findByIdAndUpdate(doctorId, { password: newPassword });
   };
+
+  const getDoctorById = async (doctorId) => {
+    return Doctor.findById(doctorId);
+  };
+  
+  const updateDetails = async (doctorId, updateBody) => {
+    return Doctor.findByIdAndUpdate(doctorId, { $set: updateBody });
+  };
+  
 module.exports = {
     createDoctor,
-    findDoctorByEmail,findDoctorByPhone,updatePassword
+    findDoctorByEmail,findDoctorByPhone,updatePassword,getDoctorById,updateDetails
 };

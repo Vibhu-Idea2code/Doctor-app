@@ -1,0 +1,22 @@
+help:
+docid
+name
+email
+issue
+
+faq:
+issue
+
+
+done:
+
+login
+signup(register)
+reset pass
+edit profile done doctor
+
+disease
+country
+
+
+

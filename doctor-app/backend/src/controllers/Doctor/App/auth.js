@@ -102,7 +102,7 @@ const forgotPass = async (req, res, next) => {
 //       await findDoctor.save();
 
       const otp = Math.floor(100000 + Math.random() * 900000);
-      const expirationTime = new Date(Date.now() + 5  *60 * 1000); // 5 minutes expiration
+      const expirationTime = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes expiration
   
       findDoctor.otp = {
         value: otp,
@@ -168,7 +168,7 @@ const forgotPass = async (req, res, next) => {
 
 const resetPassword = async (req, res) => {
     try {
-      const {  newPassword, confirmPassword, id } = req.body;
+      const {newPassword, confirmPassword, id} = req.body;
   
       console.log(id);
   
@@ -178,29 +178,20 @@ const resetPassword = async (req, res) => {
           message: "New password and confirm password do not match.",
         });
       }
-      const doctor = await Doctor.findOne(otp);
-  
+      let doctor = await Doctor.findById(id);
+      // Checking if the user is in the database or not
       if (!doctor) {
-        return res.status(404).json({
+        return res.status(400).json({
           success: false,
-          message: "doctor not found.",
-        });
-      }
-  
-      // Verify OTP
-      const checkotp = await Doctor.findOne({
-        _id: req.body.id,
-      });
-      if (!checkotp)
-        return queryErrorRelatedResponse(req, res, 401, { otp: "Invalid OTP!" });
-  
-      const hashPassword = await bcrypt.hash(newPassword, 8);
-      await doctorService.updatePassword(doctor._id, hashPassword);
+          message: "User does not exist!",
+        })
 
-      // Optionally, you can add more password validation logic here.
+      }
+
       res.status(200).json({
         success: true,
         message: "Password reset successfully!",
+        data:doctor,
       });
     } catch (error) {
       res.status(400).json({ success: false, message: error.message });
@@ -213,5 +204,4 @@ module.exports = {
   verifyOtp,
   login,
   resetPassword
-//   resendOtp,
 };
