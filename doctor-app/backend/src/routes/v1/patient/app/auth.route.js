@@ -5,16 +5,16 @@ const {
   refreshToken,
   accessToken,
 } = require("../../../../middleware/doctorAuth");
-const { authPatientController } = require("../../../../controllers");
+const { authPatientController, updatePatientController } = require("../../../../controllers");
 const { singleFileUpload } = require("../../../../helpers/upload");
 
-router.post("/create-patient",authPatientController.register);
+router.post("/create-patient", authPatientController.register);
 
-router.post("/login",authPatientController.login);
+router.post("/login", authPatientController.login);
 
-router.post("/forgotpass",authPatientController.forgotPass);
+router.post("/forgotpass", authPatientController.forgotPass);
 
-router.post("/verify-otp",authPatientController.verifyOtp);
+router.post("/verify-otp", authPatientController.verifyOtp);
 
 router.put(
   "/resetPassword",
@@ -22,11 +22,18 @@ router.put(
   authPatientController.resetPassword
 );
 
+router.post("/change-password", authPatientController.changePassword);
+
+router.put(
+  "/update-patient-profile",
+  singleFileUpload("/patientImag", "image"),
+  updatePatientController.updateDocProfile
+);
+
 // router.put(
 //   "/update-doctor-profile",
 //   singleFileUpload("/doctorImg", "image"),
 //   doctorController.updateDocProfile
 // );
-
 
 module.exports = router;

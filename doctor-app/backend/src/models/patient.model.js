@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const doctorSchema = new mongoose.Schema(
+const patientSchema = new mongoose.Schema(
   {
     name: { type: String },
     email: { type: String },
@@ -14,10 +14,10 @@ const doctorSchema = new mongoose.Schema(
     gender: {
       type: String,
     },
-    patirntImag: { type: String },
-    age: { type: Number },
-
-    image: { type: String },
+    // patientImag: { type: String },
+    age: { type: Number,default: null },
+    weight: { type: Number,default: null },
+    patientImag: { type: String },
     specialist: { type: mongoose.Schema.Types.ObjectId, ref: "specialist" },
     city: { type: String },
     country: { type: mongoose.Schema.Types.ObjectId, ref: "country" },
@@ -29,5 +29,5 @@ const doctorSchema = new mongoose.Schema(
 );
 
 // Declaring model for plan
-const Patient = mongoose.model("patient", doctorSchema);
+const Patient = mongoose.model("patient", patientSchema);
 module.exports = Patient;

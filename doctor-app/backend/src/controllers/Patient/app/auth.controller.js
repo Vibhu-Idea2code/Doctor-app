@@ -10,7 +10,7 @@ const { Doctor, Patient } = require("../../../models");
 const register = async (req, res) => {
   // const { email, password, role } = req.body;
   try {
-    const { email, password, name, confirmPassword, phoneNumber } = req.body;
+    const { email, password, name, confirmPassword, phoneNumber,city,age } = req.body;
     const reqBody = req.body;
     const existingUser = await patientService.findPatientByEmail(reqBody.email);
     if (existingUser) {
@@ -37,6 +37,7 @@ const register = async (req, res) => {
       password: hashPassword,
       token,
       phoneNumber,
+      city,age
     };
     const data = await patientService.createPatient(filter);
     res.status(200).json({ success: true, data: data });
@@ -48,8 +49,8 @@ const register = async (req, res) => {
 /* -------------------------- LOGIN/SIGNIN USER  0-new 1-already -------------------------- */
 const login = async (req, res) => {
   try {
-    const { name, password } = req.body; // Assuming "identifier" can be either email or name
-    const patient = await Patient.findOne({ name });
+    const { phoneNumber, password } = req.body; // Assuming "identifier" can be either email or name
+    const patient = await Patient.findOne({ phoneNumber });
     if (!patient) throw Error("User not found");
 
     const successPassword = await bcrypt.compare(password, patient.password);
@@ -63,7 +64,7 @@ const login = async (req, res) => {
     const token = await jwt.sign(payload, process.env.JWT_SECRET_KEY, {
       expiresIn: "1m",
     });
-    
+
     patient.token = token;
     const refreshToken = await jwt.sign(
       payload,
@@ -183,7 +184,7 @@ const resetPassword = async (req, res) => {
 
 const country = async (req, res) => {
   try {
-    const { id} = req.body;
+    const { id } = req.body;
 
     console.log(id);
 
@@ -212,10 +213,51 @@ const country = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  try {
+    const { oldpass, newpass, confirmpass, patientId } = req.body; // assuming patientId is provided in the request body
+    console.log(req.body, "++++++++++++++");
+    
+    // Find the patient by their ID
+    const patient = await Patient.findById(patientId);
+    console.log(patient, "++++++++++++++++++++++++++++++++");
+    if (!patient) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+
+    // Verify the old password
+    const isPasswordCorrect = await bcrypt.compare(oldpass, patient.password);
+    if (!isPasswordCorrect) {
+      return res.status(401).json({ error: "Incorrect old password" });
+    }
+
+    // Check if the new password and confirm password match
+    if (newpass !== confirmpass) {
+      return res
+        .status(400)
+        .json({ error: "New password and confirm password do not match" });
+    }
+
+    // Hash the new password and update it in the database
+    const hashedPassword = await bcrypt.hash(newpass, 8);
+    patient.password = hashedPassword;
+    await patient.save();
+    
+    return res
+      .status(200)
+      .json({ success: true, message: "Password updated successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 module.exports = {
   register,
   forgotPass,
   verifyOtp,
   login,
-  resetPassword,country
+  resetPassword,
+  country,
+  changePassword
 };

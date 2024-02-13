@@ -63,6 +63,11 @@ app.use(
 );
 
 app.use(
+  "/public/patientImag",
+  express.static(path.join(__dirname, "./src/public/patientImag"))
+);
+
+app.use(
   "/public/countryflag",
   express.static(path.join(__dirname, "./src/public/countryflag"))
 );
