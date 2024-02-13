@@ -17,7 +17,7 @@ const patientSchema = new mongoose.Schema(
     // patientImag: { type: String },
     age: { type: Number,default: null },
     weight: { type: Number,default: null },
-    patientImag: { type: String },
+    image: { type: String },
     specialist: { type: mongoose.Schema.Types.ObjectId, ref: "specialist" },
     city: { type: String },
     country: { type: mongoose.Schema.Types.ObjectId, ref: "country" },

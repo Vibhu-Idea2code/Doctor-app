@@ -22,6 +22,8 @@ router.put(
   authController.resetPassword
 );
 
+router.post("/change-password", authController.changePassword);
+
 router.put(
   "/update-doctor-profile",
   singleFileUpload("/doctorImg", "image"),

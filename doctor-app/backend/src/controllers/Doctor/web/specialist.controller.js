@@ -19,6 +19,8 @@ const createspecialist = async (req, res) => {
   }
 };
 
+
+
 // const getPetsList = async (req, res) => {
 //   try {
 //     let pets = await petsService.getPetsList(req, res);

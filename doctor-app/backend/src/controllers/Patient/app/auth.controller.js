@@ -3,14 +3,17 @@ const moment = require("moment");
 const jwt = require("jsonwebtoken");
 const jwtSecrectKey = "cdccsvavsvfssbtybnjnuki";
 // const otpGenerator = require("otp-generator");
-const { patientService } = require("../../../services");
+const { patientService,emailService } = require("../../../services");
 const { Doctor, Patient } = require("../../../models");
+const ejs = require("ejs");
+const path = require("path");
 
 /* -------------------------- REGISTER/CREATE USER -------------------------- */
 const register = async (req, res) => {
   // const { email, password, role } = req.body;
   try {
-    const { email, password, name, confirmPassword, phoneNumber,city,age } = req.body;
+    const { email, password, name, confirmPassword, phoneNumber,  age } =
+      req.body;
     const reqBody = req.body;
     const existingUser = await patientService.findPatientByEmail(reqBody.email);
     if (existingUser) {
@@ -37,7 +40,8 @@ const register = async (req, res) => {
       password: hashPassword,
       token,
       phoneNumber,
-      city,age
+      
+      
     };
     const data = await patientService.createPatient(filter);
     res.status(200).json({ success: true, data: data });
@@ -89,30 +93,42 @@ const login = async (req, res) => {
 };
 
 //   /* -------------------------- LOGIN WITH PHONE NUMBER WITH OTP  -------------------------- */
-const forgotPass = async (req, res, next) => {
+const forgotPass = async (req, res) => {
   try {
-    const { phoneNumber } = req.body;
-    const findpatient = await patientService.findPatientByPhone(phoneNumber);
-
-    const otp = Math.floor(100000 + Math.random() * 900000);
-    const expirationTime = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes expiration
-
-    findpatient.otp = {
-      value: otp,
-      expiration: expirationTime,
-    };
-
-    // Save the OTP in the user document
-    findpatient.otp = otp; //otp is user model key name
-    await findpatient.save();
-
+    const { email, name } = req.body;
+    const findUser = await patientService.findPatientByEmail(email);
+    console.log(findUser);
+    if (!findUser) throw Error("User not found");
+    const otp = ("0".repeat(4) + Math.floor(Math.random() * 10 ** 4)).slice(-4);
+    findUser.otp = otp;
+    await findUser.save();
+    ejs.renderFile(
+      path.join(__dirname, "../../../views/otp-template.ejs"),
+      { 
+        email: email,
+        otp: otp,
+        name: name,
+      },
+      async (err, data) => {
+        if (err) {
+          let userCreated = await patientService.findPatientByEmail(email);
+          if (userCreated) {
+            // await  Doctor.findOne({email});
+          }
+          // throw new Error("Something went wrong, please try again.");
+        } else {
+          emailService.sendMail(email, data, "Verify Email");
+        }
+      }
+    );
     res.status(200).json({
-      status: 200,
       success: true,
-      message: `OTP sent successfully ${otp}`,
+      message: "User login successfully!",
+      // data: { data },
+      data: `user otp is stored ${otp}`,
     });
-  } catch (err) {
-    res.json({ message: err.message });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
@@ -217,7 +233,7 @@ const changePassword = async (req, res) => {
   try {
     const { oldpass, newpass, confirmpass, patientId } = req.body; // assuming patientId is provided in the request body
     console.log(req.body, "++++++++++++++");
-    
+
     // Find the patient by their ID
     const patient = await Patient.findById(patientId);
     console.log(patient, "++++++++++++++++++++++++++++++++");
@@ -242,7 +258,7 @@ const changePassword = async (req, res) => {
     const hashedPassword = await bcrypt.hash(newpass, 8);
     patient.password = hashedPassword;
     await patient.save();
-    
+
     return res
       .status(200)
       .json({ success: true, message: "Password updated successfully" });
@@ -251,7 +267,6 @@ const changePassword = async (req, res) => {
   }
 };
 
-
 module.exports = {
   register,
   forgotPass,
@@ -259,5 +274,5 @@ module.exports = {
   login,
   resetPassword,
   country,
-  changePassword
+  changePassword,
 };

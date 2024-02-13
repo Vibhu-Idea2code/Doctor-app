@@ -3,9 +3,10 @@ const moment = require("moment");
 const jwt = require("jsonwebtoken");
 const jwtSecrectKey = "cdccsvavsvfssbtybnjnuki";
 // const otpGenerator = require("otp-generator");
-const { doctorService } = require("../../../services");
+const { doctorService,emailService } = require("../../../services");
 const { Doctor } = require("../../../models");
-
+const ejs = require("ejs");
+const path = require("path");
 /* -------------------------- REGISTER/CREATE USER -------------------------- */
 const register = async (req, res) => {
   // const { email, password, role } = req.body;
@@ -86,43 +87,44 @@ const login = async (req, res) => {
 };
 
 //   /* -------------------------- LOGIN WITH PHONE NUMBER WITH OTP  -------------------------- */
-const forgotPass = async (req, res, next) => {
-    try {
-      const { phoneNumber } = req.body;
-      const findDoctor = await doctorService.findDoctorByPhone(phoneNumber);
-  
-      if (!findDoctor) throw Error("0");
-  
-//       const otpExpiry = new Date();
-//       otpExpiry.setMinutes(otpExpiry.getMinutes() + 2); // Expiry set to 2 minutes instead of 5
-//       const otp = Math.floor(1000 + Math.random() * 3000);
-//       findDoctor.otp = otp;
-//       findDoctor.expireOtpTime = otpExpiry; // Set expiry time to the calculated time
-//   console.log(otpExpiry)
-//       await findDoctor.save();
-
-      const otp = Math.floor(100000 + Math.random() * 900000);
-      const expirationTime = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes expiration
-  
-      findDoctor.otp = {
-        value: otp,
-        expiration: expirationTime,
-      };
-  
-      // Save the OTP in the user document
-      findDoctor.otp = otp; //otp is user model key name
-      await findDoctor.save();
-      
-  
-      res.status(200).json({
-        status: 200,
-        success: true,
-        message: `OTP sent successfully ${otp}`,
-      });
-    } catch (err) {
-      res.json({ message: err.message });
-    }
-  };
+const forgotPass = async (req, res) => {
+  try {
+    const { email, name } = req.body;
+    const findUser = await  doctorService.findDoctorByEmail(email);
+    console.log(findUser);
+    if (!findUser) throw Error("User not found");
+    const otp = ("0".repeat(4) + Math.floor(Math.random() * 10 ** 4)).slice(-4);
+    findUser.otp = otp;
+    await findUser.save();
+    ejs.renderFile(
+      path.join(__dirname, "../../../views/otp-template.ejs"),
+      {
+        email: email,
+        otp: otp,
+        name: name,
+      },
+      async (err, data) => {
+        if (err) {
+          let userCreated = await  doctorService.findDoctorByEmail(email);
+          if (userCreated) {
+            // await  Doctor.findOne({email});
+          }
+          // throw new Error("Something went wrong, please try again.");
+        } else {
+          emailService.sendMail(email, data, "Verify Email");
+        }
+      }
+    );
+    res.status(200).json({
+      success: true,
+      message: "User login successfully!",
+      // data: { data },
+      data: `user otp is stored ${otp}`,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
   
   const verifyOtp = async (req, res) => {
     try {
@@ -198,10 +200,48 @@ const resetPassword = async (req, res) => {
     }
   };
 
+  const changePassword = async (req, res) => {
+    try {
+      const { oldpass, newpass, confirmpass, doctorId } = req.body; // assuming patientId is provided in the request body
+      console.log(req.body, "++++++++++++++");
+      
+      // Find the patient by their ID
+      const doctor = await Doctor.findById(doctorId);
+      console.log(doctor, "++++++++++++++++++++++++++++++++");
+      if (!doctor) {
+        return res.status(404).json({ error: "doctor not found" });
+      }
+  
+      // Verify the old password
+      const isPasswordCorrect = await bcrypt.compare(oldpass, doctor.password);
+      if (!isPasswordCorrect) {
+        return res.status(401).json({ error: "Incorrect old password" });
+      }
+  
+      // Check if the new password and confirm password match
+      if (newpass !== confirmpass) {
+        return res
+          .status(400)
+          .json({ error: "New password and confirm password do not match" });
+      }
+  
+      // Hash the new password and update it in the database
+      const hashedPassword = await bcrypt.hash(newpass, 8);
+      doctor.password = hashedPassword;
+      await doctor.save();
+      
+      return res
+        .status(200)
+        .json({ success: true, message: "Password updated successfully" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
 module.exports = {
   register,
   forgotPass,
   verifyOtp,
   login,
-  resetPassword
+  resetPassword,changePassword
 };

@@ -8,6 +8,7 @@ faq:
 issue
 
 
+
 done:
 
 login
@@ -18,5 +19,11 @@ edit profile done doctor
 disease
 country
 
+done
+home screen
+specilist-list  api
+doctors -list api 
+
+auth both side (patient and doctor)
 
 
