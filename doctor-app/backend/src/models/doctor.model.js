@@ -14,6 +14,10 @@ const doctorSchema = new mongoose.Schema(
     gender: {
       type: String,
     },
+    // video,voice,message all are required
+    videocallPrice:{type: String},
+    messagecallPrice:{type: String},
+    voicecallPrice:{type: String},
     image:{ type: String},
     specialist:{type: mongoose.Schema.Types.ObjectId, ref: "specialist" },
     city: { type: String },

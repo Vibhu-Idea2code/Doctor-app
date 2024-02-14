@@ -10,6 +10,8 @@ module.exports.countryController = require("./Patient/web/country.controller");
 module.exports.authPatientController = require("./Patient/app/auth.controller");
 module.exports.updatePatientController = require("./Patient/app/updatePatient.controller");
 module.exports.homeScreenPatientController = require("./Patient/app/homeScreen.controller");
+module.exports.appointmentController = require("./Patient/app/appointment.controller");
+
 
 
 

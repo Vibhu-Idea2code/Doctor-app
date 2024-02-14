@@ -10,6 +10,9 @@ const countryRoute = require("./patient/web/country.route");
 
 const patientRoute = require("./patient/app/auth.route");
 
+const appointmentRoute = require("./patient/app/appointmentbook.route");
+
+
 
 
 
@@ -20,6 +23,8 @@ router.use("/specialist", specialistRoute);
 router.use("/disease", diseasetRoute);
 router.use("/country", countryRoute);
 router.use("/patient", patientRoute);
+router.use("/appointment", appointmentRoute);
+
 
 
 
