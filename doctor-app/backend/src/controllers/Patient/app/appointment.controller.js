@@ -28,7 +28,7 @@ const createAppointment = async (req, res) => {
 // Get all appointments
 const getAppointments = async (req, res) => {
   try {
-    const appointments = await AppointmentBook.find();
+    const appointments = await AppointmentBook.find().populate('patientid').populate('doctorid');
     res.status(200).json({ success: true, data: appointments });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });

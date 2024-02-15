@@ -15,12 +15,13 @@ const doctorSchema = new mongoose.Schema(
       type: String,
     },
     // video,voice,message all are required
-    videocallPrice:{type: String},
-    messagecallPrice:{type: String},
-    voicecallPrice:{type: String},
-    image:{ type: String},
-    specialist:{type: mongoose.Schema.Types.ObjectId, ref: "specialist" },
+    videocallPrice: { type: String },
+    messagecallPrice: { type: String },
+    voicecallPrice: { type: String },
+    image: { type: String },
+    specialist: { type: mongoose.Schema.Types.ObjectId, ref: "specialist" },
     city: { type: String },
+    rating: { type: mongoose.Schema.Types.ObjectId, ref: "appointmentbook" },
     //   specialty: { type: "array", items: { $ref: "#/components/schemas/Specialty" } },
     //   availableHours: {
     //     type: "array",

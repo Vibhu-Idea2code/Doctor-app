@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 const config = require("../config/config");
 const dotenv = require("dotenv");
-dotenv.config({ path: './.env' });
+dotenv.config({ path: "./.env" });
 
 let transport = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -30,3 +30,4 @@ const sendMail = async (to, data, subject) => {
 module.exports = {
   sendMail,
 };
+    

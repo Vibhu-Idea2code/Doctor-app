@@ -24,16 +24,16 @@ const appointmentBookSchema = new mongoose.Schema(
     cancelreason:{ type :String, default:"null"},
     reschedulereason:{ type :String, default:"null"},
     review:{ type:String,default:"null" },
-    prescription: [{
-        prescriptionname: { type: String },
-        quantity: { type: Number },
-        day: { type: String },
-        time: [{ type: String }], 
-        at: { type: String }
-      }], 
+    // prescription: [{
+    //     prescriptionname: { type: String },
+    //     quantity: { type: Number },
+    //     day: { type: String },
+    //     time: [{ type: String }], 
+    //     at: { type: String }
+    //   }], 
     rating:{type:Number},
     // yes no
-    recommendStatus:{type:Boolean},
+    recommendStatus:{type:Boolean,default:false},
     patientid: {
      type: mongoose.Schema.Types.ObjectId,
      ref: "patient",

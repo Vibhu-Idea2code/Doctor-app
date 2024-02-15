@@ -1,13 +1,55 @@
-const { Doctor, Specialist } = require("../../../models");
+const { Doctor, Specialist, AppointmentBook } = require("../../../models");
 
 /* ----------------------------- Get USER data ----------------------------- */
 const allDoctorList = async (req, res) => {
   try {
-    const userData = await Doctor.find();
+    // Fetch all doctors along with their ratings and specialities
+    const doctorsData = await Doctor.aggregate([
+      {
+        $lookup: {
+          from: "appointmentbooks",
+          localField: "_id",
+          foreignField: "doctorid",
+          as: "appointments",
+        },
+      },
+      {
+        $lookup: {
+          from: "specialists",
+          localField: "specialist",
+          foreignField: "_id",
+          as: "specialistInfo",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          speciality: "$specialistInfo.name",
+          // Calculate average rating
+          averageRating: {
+            $avg: "$appointments.rating",
+          },
+        },
+      },
+      {
+        // Sort by rating in descending order
+        $sort: {
+          averageRating: -1,
+        },
+      },
+    ]);
 
-    if (!userData) {
-      return res.status(404).json({ message: "User list ata not found" });
+    // If no doctors found, return 404
+    if (!doctorsData || doctorsData.length === 0) {
+      return res.status(404).json({ message: "Doctor list not found" });
     }
+
+    // Add sorting for doctors with no ratings
+    const doctorsWithRatings = doctorsData.filter((doctor) => doctor.averageRating !== null);
+    const doctorsWithoutRatings = doctorsData.filter((doctor) => doctor.averageRating === null);
+
+    const sortedDoctors = [...doctorsWithRatings, ...doctorsWithoutRatings];
 
     const baseUrl =
       req.protocol +
@@ -17,12 +59,12 @@ const allDoctorList = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "user data get successfully ",
-      user: userData,
+      message: "Doctor data fetched successfully",
+      doctors: sortedDoctors,
       baseUrl: baseUrl,
     });
   } catch (error) {
-    res.status(404).json({
+    res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -37,11 +79,11 @@ const allSpecialList = async (req, res) => {
       return res.status(404).json({ message: "User list ata not found" });
     }
 
-    //   const baseUrl =
-    //     req.protocol +
-    //     "://" +
-    //     req.get("host") +
-    //     process.env.BASE_URL_PROFILE_PATH;
+      // const baseUrl =
+      //   req.protocol +
+      //   "://" +
+      //   req.get("host") +
+      //   process.env.BASE_URL_PROFILE_PATH;
 
     res.status(200).json({
       success: true,
