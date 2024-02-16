@@ -22,19 +22,7 @@ const doctorSchema = new mongoose.Schema(
     specialist: { type: mongoose.Schema.Types.ObjectId, ref: "specialist" },
     city: { type: String },
     rating: { type: mongoose.Schema.Types.ObjectId, ref: "appointmentbook" },
-    //   specialty: { type: "array", items: { $ref: "#/components/schemas/Specialty" } },
-    //   availableHours: {
-    //     type: "array",
-    //     items: {
-    //       type: "object",
-    //       properties: {
-    //         day: { type: "number", enum: [0,1,2,3,4,5,6] }, // 0 - Domingo / 1 - Segunda-feira ... etc
-    //         from: { type: "string", format: "HH:mm:ss" },
-    //         to: { type: "string", format: "HH:mm:ss" }
-    //       }
-    //     }
-    //   },
-    //   patient:{type:"ObjectId", ref:"Patient"}
+  
   },
   {
     timestamps: true,

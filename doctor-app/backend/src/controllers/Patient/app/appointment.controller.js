@@ -5,10 +5,10 @@ const createAppointment = async (req, res) => {
     try {
         const reqBody = req.body;
         // Generate a 6-digit random number
-        const appointmentId = Math.floor(100000 + Math.random() * 900000);
+        const uniqueid = Math.floor(100000 + Math.random() * 900000);
         
-        // Add the appointmentId to the request body
-        reqBody.appointmentId = appointmentId;
+        // Add the uniqueid to the request body
+        reqBody.uniqueid = uniqueid;
     
         const appointment = await AppointmentBook.create(reqBody);
         if (!appointment) {

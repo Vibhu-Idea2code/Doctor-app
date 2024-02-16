@@ -19,6 +19,12 @@ router.get(
   "/list",
   appointmentController.getAppointments
 );
+
+
+router.get(
+  "/list-doctor-id",
+  appointmentController.getAppointmentById
+);
   
 
 module.exports = router;

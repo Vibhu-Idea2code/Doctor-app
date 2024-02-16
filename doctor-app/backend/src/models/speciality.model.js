@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const specialistSchema = new mongoose.Schema(
   {
     name: { type: String },
+    image:{type:String,},
   },
   {
     timestamps: true,

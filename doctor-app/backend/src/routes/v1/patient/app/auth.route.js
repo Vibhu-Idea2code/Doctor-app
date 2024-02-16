@@ -5,7 +5,7 @@ const {
   refreshToken,
   accessToken,
 } = require("../../../../middleware/doctorAuth");
-const { authPatientController, updatePatientController, homeScreenPatientController } = require("../../../../controllers");
+const { authPatientController, updatePatientController, homeScreenPatientController, doctorDetailController } = require("../../../../controllers");
 const { singleFileUpload } = require("../../../../helpers/upload");
 
 router.post("/create-patient", authPatientController.register);
@@ -35,6 +35,13 @@ router.get("/specialist-list", homeScreenPatientController.allSpecialList)
 router.get("/search-specialist-city", homeScreenPatientController.searchDoctorSpecialist);
 
 
+
+
+/* ---------------------------- DETAILS OF DOCTOR --------------------------- */
+router.get(
+  "/list-doctor-id",
+  doctorDetailController.allDoctorListById
+); 
 // router.put(
 //   "/update-doctor-profile",
 //   singleFileUpload("/doctorImg", "image"),

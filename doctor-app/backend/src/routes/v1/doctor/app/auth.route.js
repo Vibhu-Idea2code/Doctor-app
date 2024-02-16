@@ -46,3 +46,19 @@ router.put(
 // router.put("/updatePetStatus/:id",petController.updatePetStatus);
 
 module.exports = router;
+
+// General
+// Cardiologist
+// Dentist
+// Dermatologist
+// Pediatrician
+// Gynecologist
+// Nutritionist
+// Endocrinologist
+// Psychiatrist
+// Hematologist
+// Ophthalmologist
+// Oncologist
+// Orthopedic
+// Urologist
+// Neurologist

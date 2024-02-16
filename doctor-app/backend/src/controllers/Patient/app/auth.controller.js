@@ -12,8 +12,9 @@ const path = require("path");
 const register = async (req, res) => {
   // const { email, password, role } = req.body;
   try {
-    const { email, password, name, confirmPassword, phoneNumber,  age } =
+    const { email, password, name, confirmPassword, phoneNumber } =
       req.body;
+     
     const reqBody = req.body;
     const existingUser = await patientService.findPatientByEmail(reqBody.email);
     if (existingUser) {
@@ -53,8 +54,8 @@ const register = async (req, res) => {
 /* -------------------------- LOGIN/SIGNIN USER  0-new 1-already -------------------------- */
 const login = async (req, res) => {
   try {
-    const { phoneNumber, password } = req.body; // Assuming "identifier" can be either email or name
-    const patient = await Patient.findOne({ phoneNumber });
+    const { email, password } = req.body; // Assuming "identifier" can be either email or name
+    const patient = await Patient.findOne({ email });
     if (!patient) throw Error("User not found");
 
     const successPassword = await bcrypt.compare(password, patient.password);
@@ -134,7 +135,7 @@ const forgotPass = async (req, res) => {
 
 const verifyOtp = async (req, res) => {
   try {
-    const { otp, phoneNumber } = req.body;
+    const { otp, email } = req.body;
 
     const doctor = await Patient.findOne({ phoneNumber });
 

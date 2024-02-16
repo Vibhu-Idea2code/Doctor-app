@@ -3,8 +3,8 @@ const fs = require("fs");
 const { doctorService } = require("../../../services");
 const { Doctor } = require("../../../models");
 
-/* ----------------------------- Get admin list ------------*/
-/* ----------------------------- update user profile ----------------------------- */
+
+/* ----------------------------- update Doctor profile ----------------------------- */
 const updateDocProfile = async (req, res) => {
   try {
     const reqbody = req.body;
@@ -42,6 +42,6 @@ const updateDocProfile = async (req, res) => {
 
 
 module.exports = {
-  updateDocProfile,
+  updateDocProfile
   
 };

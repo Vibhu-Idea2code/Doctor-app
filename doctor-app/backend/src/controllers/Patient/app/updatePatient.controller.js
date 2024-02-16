@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const { patientService } = require("../../../services");
 const { Patient } = require("../../../models");
+const userHelper = require("../../../helpers/userHelper");
 
 /* ----------------------------- update user profile ----------------------------- */
 const updatepatientProfile = async (req, res) => {
@@ -21,7 +22,8 @@ const updatepatientProfile = async (req, res) => {
        const fullName = reqbody.first_name + ' ' + reqbody.last_name;
        reqbody.name = fullName;
    
-
+       const age = userHelper.calculateAge(reqbody.birthDate);
+       reqbody.age = age;
     // Update user data in the database
     const isUpdate = await Patient.findByIdAndUpdate(
       reqbody.patientId,

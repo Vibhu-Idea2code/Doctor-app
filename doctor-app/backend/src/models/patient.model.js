@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const patientSchema = new mongoose.Schema(
   {
-    name: { type: String },
+    name: { type: String ,trim:true},
     email: { type: String },
     password: { type: String },
     token: { type: String },
@@ -20,6 +20,7 @@ const patientSchema = new mongoose.Schema(
     image: { type: String },
     specialist: { type: mongoose.Schema.Types.ObjectId, ref: "specialist" },
     city: { type: String },
+    bloodgroup:{ type: String},
     country: { type: mongoose.Schema.Types.ObjectId, ref: "country" },
   },
   {

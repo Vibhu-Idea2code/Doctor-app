@@ -7,7 +7,7 @@ const { doctorService,emailService } = require("../../../services");
 const { Doctor } = require("../../../models");
 const ejs = require("ejs");
 const path = require("path");
-/* -------------------------- REGISTER/CREATE USER -------------------------- */
+/* -------------------------- REGISTER/CREATE DOCTOR -------------------------- */
 const register = async (req, res) => {
   // const { email, password, role } = req.body;
   try {
@@ -42,13 +42,14 @@ const register = async (req, res) => {
   }
 };
 
-/* -------------------------- LOGIN/SIGNIN USER  0-new 1-already -------------------------- */
+/* -------------------------- LOGIN/SIGNIN DOCTOR  0-new 1-already -------------------------- */
 const login = async (req, res) => {
   try {
-    const { identifier, password } = req.body; // Assuming "identifier" can be either email or name
-    const doctor = await Doctor.findOne({
-      $or: [{ email: identifier }, { name: identifier }],
-    });
+    const { email, password } = req.body; // Assuming "identifier" can be either email or name
+    // const doctor = await Doctor.findOne({
+    //   $or: [{ email: identifier }, { name: identifier }],
+    // });
+    const doctor = await Doctor.findOne({ email });
     if (!doctor) throw Error("User not found");
 
     const successPassword = await bcrypt.compare(password, doctor.password);
@@ -125,7 +126,7 @@ const forgotPass = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
-  
+  /* ------------------------------- VERIFY OTP ------------------------------- */
   const verifyOtp = async (req, res) => {
     try {
       const { otp, phoneNumber } = req.body;
@@ -161,13 +162,7 @@ const forgotPass = async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   };
-  
-
-// const resendOtp=async(req,res)=>{
-//     const doctor = await Doctor.findOne({ email: req.body.email });
-
-// }
-
+/* ----------------------------- RESET PASSWORD ----------------------------- */
 const resetPassword = async (req, res) => {
     try {
       const {newPassword, confirmPassword, id} = req.body;
@@ -199,7 +194,7 @@ const resetPassword = async (req, res) => {
       res.status(400).json({ success: false, message: error.message });
     }
   };
-
+/* ----------------------------- CHANGE PASSWORD ---------------------------- */
   const changePassword = async (req, res) => {
     try {
       const { oldpass, newpass, confirmpass, doctorId } = req.body; // assuming patientId is provided in the request body
@@ -243,5 +238,6 @@ module.exports = {
   forgotPass,
   verifyOtp,
   login,
-  resetPassword,changePassword
+  resetPassword,
+  changePassword
 };

@@ -1,6 +1,10 @@
-const { Doctor, Specialist, AppointmentBook } = require("../../../models");
+/* --------------------------- PATIENT HOME SCREEN -------------------------- */
 
-/* ----------------------------- Get USER data ----------------------------- */
+const { Doctor, Specialist, AppointmentBook, Patient } = require("../../../models");
+// const {successResponse}=require("../../../helpers/sendresponse")
+
+
+/* ----------------------------- All Doctor List Rating Wise Filter ----------------------------- */
 const allDoctorList = async (req, res) => {
   try {
     // Fetch all doctors along with their ratings and specialities
@@ -52,10 +56,7 @@ const allDoctorList = async (req, res) => {
     const sortedDoctors = [...doctorsWithRatings, ...doctorsWithoutRatings];
 
     const baseUrl =
-      req.protocol +
-      "://" +
-      req.get("host") +
-      process.env.BASE_URL_PROFILE_PATH;
+      req.protocol +"://" +req.get("host") +process.env.BASE_URL_PROFILE_PATH;
 
     res.status(200).json({
       success: true,
@@ -71,6 +72,8 @@ const allDoctorList = async (req, res) => {
   }
 };
 
+/* -------------- All Specilaist List At Home Screen Of Patient ------------- */
+
 const allSpecialList = async (req, res) => {
   try {
     const userData = await Specialist.find();
@@ -79,17 +82,10 @@ const allSpecialList = async (req, res) => {
       return res.status(404).json({ message: "User list ata not found" });
     }
 
-      // const baseUrl =
-      //   req.protocol +
-      //   "://" +
-      //   req.get("host") +
-      //   process.env.BASE_URL_PROFILE_PATH;
-
     res.status(200).json({
       success: true,
       message: "user data get successfully ",
       user: userData,
-      // baseUrl: baseUrl,
     });
   } catch (error) {
     res.status(404).json({
