@@ -29,6 +29,8 @@ router.put(
   singleFileUpload("/doctorImg", "image"),
   doctorController.updateDocProfile
 );
+
+router.delete("/delete-doc/:doctorId", doctorController.deleteDoctor);
 // router.get('/list',accessToken(),
 // petController.getPetsList);
 

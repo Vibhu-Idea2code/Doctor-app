@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const appointmentBookSchema = new mongoose.Schema(
   {
     uniqueid: { type: String },
-    symptoms:{ type: String,},
+    symptoms: { type: String },
     appointmentdate: {
       type: Date,
     },
@@ -22,8 +22,6 @@ const appointmentBookSchema = new mongoose.Schema(
     reschedulereason: { type: String, default: "null" },
     review: { type: String, default: "null" },
     rating: { type: Number },
-    // yes no
-    recommendStatus: { type: Boolean, default: false },
     patientid: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "patient",
@@ -32,6 +30,15 @@ const appointmentBookSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "doctor",
     },
+    symptoms: {
+      type: String,
+    },
+    status:{type:Boolean, default:true},
+
+    reasonrescheduleappointment : {
+      type:String,
+    }, 
+  
   },
   {
     timestamps: true,

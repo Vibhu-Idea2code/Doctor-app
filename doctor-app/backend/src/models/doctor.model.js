@@ -19,10 +19,12 @@ const doctorSchema = new mongoose.Schema(
     messagecallPrice: { type: String },
     voicecallPrice: { type: String },
     image: { type: String },
+    country: { type: mongoose.Schema.Types.ObjectId, ref: "country" },
+
     specialist: { type: mongoose.Schema.Types.ObjectId, ref: "specialist" },
     city: { type: String },
     rating: { type: mongoose.Schema.Types.ObjectId, ref: "appointmentbook" },
-  
+  completeappointment:{type:Boolean, default:"0"},
   },
   {
     timestamps: true,

@@ -51,33 +51,46 @@ const getAppointmentById = async (req, res) => {
 // Update appointment by ID
 const updateAppointment = async (req, res) => {
   try {
-    const appointment = await AppointmentBook.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const appointment = await AppointmentBook.findByIdAndUpdate(req.body.id, req.body, { new: true });
     if (!appointment) {
       return res.status(404).json({ success: false, error: 'Appointment not found' });
     }
-    res.status(200).json({ success: true, data: appointment });
+    res.status(200).json({ success: true, status:200 ,message:'update review and rating done',data: appointment});
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+const updateRescheduleAppointment = async (req, res) => {
+  try {
+    const appointment = await AppointmentBook.findByIdAndUpdate(req.body.id, req.body, { new: true });
+    if (!appointment) {
+      return res.status(404).json({ success: false, error: 'Appointment not found' });
+    }
+    res.status(200).json({ success: true, status:200 ,message:'update review and rating done',data: appointment});
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 };
 
 // Delete appointment by ID
-const deleteAppointment = async (req, res) => {
-  try {
-    const appointment = await AppointmentBook.findByIdAndDelete(req.params.id);
-    if (!appointment) {
-      return res.status(404).json({ success: false, error: 'Appointment not found' });
-    }
-    res.status(200).json({ success: true, data: {} });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
+// const deleteAppointment = async (req, res) => {
+//   try {
+//     const appointment = await AppointmentBook.findByIdAndDelete(req.params.id);
+//     if (!appointment) {
+//       return res.status(404).json({ success: false, error: 'Appointment not found' });
+//     }
+//     res.status(200).json({ success: true, data: {} });
+//   } catch (error) {
+//     res.status(500).json({ success: false, error: error.message });
+//   }
+// };
 
 module.exports = {
   createAppointment,
   getAppointments,
   getAppointmentById,
   updateAppointment,
-  deleteAppointment
+  // deleteAppointment,
+  updateRescheduleAppointment
 };

@@ -6,6 +6,7 @@ module.exports.Patient = require("./patient.model");
 module.exports.AppointmentBook = require("./appointmentbook.model");
 module.exports.Faq = require("./faq.model");
 module.exports.FavoriteDoctor = require("./favoritedoctor.model");
+module.exports.Help = require("./help.model");
 
 
 

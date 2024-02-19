@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const { doctorService } = require("../../../services");
 const { Doctor } = require("../../../models");
+const deleteFiles =require("../../../helpers/deletefile");
 
 
 /* ----------------------------- update Doctor profile ----------------------------- */
@@ -40,8 +41,34 @@ const updateDocProfile = async (req, res) => {
   }
 };
 
+const deleteDoctor = async (req, res) => {
+  try {
+    const userData = await Doctor.findById(req.params.doctorId);
+
+    if (!userData) {
+      return res.status(404).json({ message: "User Data not found" });
+    }
+    const DeletedData = await Doctor.findByIdAndDelete(req.params.doctorId, req.body, {
+      new: true,
+    });
+
+    deleteFiles("doctorImg/" + userData.image);
+    console.log("Deleted",deleteFiles)
+
+    res.status(200).json({
+      success: true,
+      message: "List of User Data successfully ",
+      user: DeletedData,
+    });
+
+  } catch (error) {
+    res.status(404).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 module.exports = {
-  updateDocProfile
-  
+  updateDocProfile,deleteDoctor
 };

@@ -14,6 +14,8 @@ module.exports.updatePatientController = require("./Patient/app/updatePatient.co
 module.exports.homeScreenPatientController = require("./Patient/app/homeScreen.controller");
 module.exports.appointmentController = require("./Patient/app/appointment.controller");
 module.exports.faqController = require("./Doctor/web/faq.controller");
+module.exports.favoriteDoctorController = require("./Patient/app/favoritedoctor.controller");
+
 
 
 

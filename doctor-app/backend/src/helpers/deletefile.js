@@ -22,13 +22,16 @@ const fs = require("fs");
 //   }
 // };
 
+// const fs = require("fs");
+
 module.exports = deleteFiles = (files) => {
-  const basePath = __dirname + "/../public/" + files;
+  const basePath = "/public/" + files;
+
   try {
-    // Delete multiple files
+    //Delete multiple files
     if (Array.isArray(files)) {
-      files.forEach((file) => {
-        console.log(basePath, "line no 34");
+      files.forEach((path) => {
+        // Going through every file and check for existance...
         if (fs.existsSync(basePath)) {
           fs.unlinkSync(basePath);
         }
