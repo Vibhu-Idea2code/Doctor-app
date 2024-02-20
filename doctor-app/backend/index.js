@@ -58,8 +58,8 @@ app.use(express.static(path.resolve(__dirname, `./src/views`)));
 
 app.use("/v1", routes);
 app.use(
-  "/public/docotrImg",
-  express.static(path.join(__dirname, "./src/public/docotrImg"))
+  "/public/doctorImg",
+  express.static(path.join(__dirname, "./src/public/doctorImg"))
 );
 
 app.use(

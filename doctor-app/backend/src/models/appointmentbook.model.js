@@ -16,7 +16,7 @@ const appointmentBookSchema = new mongoose.Schema(
     paymentamount: { type: Number, default: 0 },
     //paid or pending or fail
     paymentstatus: { type: String, default: "0" },
-    // upcomming or cancele or complete or  pending
+    // 1-completed, 0-upcomming
     appointmentstatus: { type: String, default: "0" },
     cancelreason: { type: String, default: "null" },
     reschedulereason: { type: String, default: "null" },

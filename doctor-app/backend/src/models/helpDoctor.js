@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
 
-const helpSchema = new mongoose.Schema(
+const helpDoctorSchema = new mongoose.Schema(
   {
-    pateintId: { type: mongoose.Schema.Types.ObjectId, ref: "patient" },
-   
+    doctorId: { type: mongoose.Schema.Types.ObjectId, ref: "doctor" },
     question: {
       type: String,
     },
@@ -23,6 +22,5 @@ const helpSchema = new mongoose.Schema(
 );
 
 // Declaring model for plan
-const Help = mongoose.model("help", helpSchema);
-module.exports = Help;
-
+const helpDoctor = mongoose.model("helpDoctor", helpDoctorSchema);
+module.exports = helpDoctor;

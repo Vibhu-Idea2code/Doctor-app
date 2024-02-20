@@ -12,6 +12,9 @@ router.post("/add-appointment", appointmentController.createAppointment);
 
 router.get("/list", appointmentController.getAppointments);
 
+router.get("/list-upcomming", appointmentController.getAppointmentstatus);
+
+
 router.get("/list-doctor-id", appointmentController.getAppointmentById);
 
 router.put("/update-review-rating", appointmentController.updateAppointment);

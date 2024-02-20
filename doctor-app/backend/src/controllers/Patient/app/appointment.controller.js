@@ -2,30 +2,34 @@ const AppointmentBook = require('../../../models/appointmentbook.model');
 
 // Create a new appointment
 const createAppointment = async (req, res) => {
-    try {
-        const reqBody = req.body;
-        // Generate a 6-digit random number
-        const uniqueid = Math.floor(100000 + Math.random() * 900000);
-        
-        // Add the uniqueid to the request body
-        reqBody.uniqueid = uniqueid;
-    
-        const appointment = await AppointmentBook.create(reqBody);
-        if (!appointment) {
-          throw new Error("no such appointment");
-        }
-        res.status(200).json({
-          message: "Successfully created a new appointment",
-          success: true,
-          data: appointment,
-        });
-      } catch (error) {
-        res.status(400).json({ success: false, message: error.message });
-      }
-  };
-  
+  try {
+      const reqBody = req.body;
+      // Generate a 6-digit random number
+      const uniqueid = Math.floor(100000 + Math.random() * 900000);
+      
+      // Add the uniqueid to the request body
+      reqBody.uniqueid = uniqueid;
 
-// Get all appointments
+      // Capture the current system time
+      const currentTime = new Date();
+      reqBody.appointmentAddedTime = currentTime; // Add the appointment time to the request body
+  
+      const appointment = await AppointmentBook.create(reqBody);
+      if (!appointment) {
+        throw new Error("No such appointment");
+      }
+      res.status(200).json({
+        message: "Successfully created a new appointment",
+        success: true,
+        data: appointment,
+      });
+    } catch (error) {
+      res.status(400).json({ success: false, message: error.message });
+    }
+};
+
+
+  // Get all appointments
 const getAppointments = async (req, res) => {
   try {
     const appointments = await AppointmentBook.find().populate('patientid').populate('doctorid');
@@ -34,6 +38,17 @@ const getAppointments = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+// Get all appointments
+const getAppointmentstatus = async (req, res) => {
+  try {
+    const appointments = await AppointmentBook.find({ appointmentstatus: 0 }).populate('patientid').populate('doctorid');
+    res.status(200).json({ success: true, data: appointments });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 
 // Get single appointment by ID
 const getAppointmentById = async (req, res) => {
@@ -91,6 +106,7 @@ module.exports = {
   getAppointments,
   getAppointmentById,
   updateAppointment,
+  getAppointmentstatus,
   // deleteAppointment,
   updateRescheduleAppointment
 };

@@ -34,6 +34,8 @@ router.get("/docotr-list", homeScreenPatientController.allDoctorList)
 router.get("/specialist-list", homeScreenPatientController.allSpecialList)
 router.get("/search-specialist-city", homeScreenPatientController.searchDoctorSpecialist);
 
+router.delete("/delete-patient/:patientId", updatePatientController.deletePatient);
+
 
 
 
@@ -42,6 +44,8 @@ router.get(
   "/list-doctor-id",
   doctorDetailController.allDoctorListById
 ); 
+
+
 // router.put(
 //   "/update-doctor-profile",
 //   singleFileUpload("/doctorImg", "image"),
