@@ -17,10 +17,12 @@ const allDoctorListById = async (req, res) => {
 
     const appointmentDetails = await AppointmentBook.find({
       doctorid: reqbody.doctorId,
-    }).populate({
-      path: "patientid",
-      select: "name image", // Select the fields you want to populate
-    }) .select("rating review doctorid patientid");;
+    })
+      .populate({
+        path: "patientid",
+        select: "name image", // Select the fields you want to populate
+      })
+      .select("rating review doctorid patientid");
 
     res.status(200).json({
       success: true,
@@ -39,6 +41,38 @@ const allDoctorListById = async (req, res) => {
   }
 };
 
+// const Doctor = require('./doctorModel'); // Assuming you have a Doctor model defined
+// const AppointmentBook = require('./appointmentBookModel');
+
+const doctorByIdDetails = async (req, res) => {
+  try {
+    const doctorId = req.params.doctorId;
+
+    const appointments = await AppointmentBook.find({
+      doctorid: doctorId,
+    }).populate("doctorid", "name specialist review rating");
+    // .select('review rating');
+
+    if (!appointments) {
+      throw new Error("No appointments found for this doctor!");
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Doctor details retrieved successfully!",
+      data: appointments.map((appointment) => ({
+        name: appointment.doctorid.name,
+        specialist: appointment.doctorid.specialist,
+        review: appointment.review,
+        rating: appointment.rating,
+      })),
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   allDoctorListById,
+  doctorByIdDetails,
 };

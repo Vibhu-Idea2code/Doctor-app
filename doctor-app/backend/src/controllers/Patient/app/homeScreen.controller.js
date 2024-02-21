@@ -97,51 +97,83 @@ const allSpecialList = async (req, res) => {
 
 /* ----------------------------- Get particuler News search data ----------------------------- */
 const searchDoctorSpecialist = async (req, res) => {
-    try {
-      const { query } = req.query;
-  
-      // Check if query parameter is provided
-      if (!query) {
-        return res.status(400).json({
-          success: false,
-          message: "Query parameter is missing.",
-        });
-      }
-  
-      // Use a regular expression for case-insensitive search
-      const regex = new RegExp(query, "i");
-  
-      // Search in Doctor model
-      const doctorResults = await Doctor.find({
-        city: regex, // Adjust to match the field you are searching against
+  try {
+    const { query } = req.query;
+
+    // Check if query parameter is provided
+    if (!query) {
+      return res.status(400).json({
+        success: false,
+        message: "Query parameter is missing.",
       });
-  
-      // Search in Specialist model
-      const specialistResults = await Specialist.find({
-        name: regex, // Adjust to match the field you are searching against
-      });
-  
-      // Combine the results from both models
-      const combinedResults = [...doctorResults, ...specialistResults];
-  
-      if (combinedResults.length === 0) {
-        return res.status(404).json({
-          success: false,
-          message: "No matching doctors or specialists found for the given query.",
-        });
-      }
-  
-      // If results are found, return a success response with the combined search results
-      res.status(200).json({
-        success: true,
-        message: "Search data retrieved successfully.",
-        searchResults: combinedResults,
-      });
-    } catch (error) {
-      console.error("Error in searchDoctorSpecialist:", error);
-      res.status(500).json({ success: false, error: "Internal Server Error" });
     }
-  };
+
+    // Use regular expression for case-insensitive search
+    const regex = new RegExp(query, "i");
+
+    // Search for the Specialist ObjectId based on the provided query
+    const specialist = await Specialist.findOne({ name: regex });
+
+    // Search for doctors matching the city
+    const doctorsByCity = await Doctor.find({ city: regex });
+
+    let combinedResults = [];
+
+    // If a specialist is found, search for doctors by the specialist
+    if (specialist) {
+      const doctorsBySpecialist = await Doctor.find({ specialist: specialist._id });
+      combinedResults = [...doctorsBySpecialist, ...doctorsByCity];
+    } else {
+      combinedResults = doctorsByCity;
+    }
+
+    if (combinedResults.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No matching doctors or specialists found for the given query.",
+      });
+    }
+
+    // Fetching reviews for each doctor and calculating average rating
+    const populatedDoctors = await Promise.all(
+      combinedResults.map(async (doctor) => {
+        const doctorWithReview = doctor.toObject(); // Convert to plain JavaScript object
+        const reviews = await AppointmentBook.find({ doctorid: doctor._id }).populate('patientid', 'name image').select('review rating');
+        
+        // Calculate average rating
+        let totalRating = 0;
+        reviews.forEach(review => {
+          totalRating += review.rating;
+        });
+        const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
+        
+        doctorWithReview.reviews = reviews;
+        doctorWithReview.averageRating = averageRating;
+        return doctorWithReview;
+      })
+    );
+
+    // Sort the populatedDoctors array by averageRating
+    populatedDoctors.sort((a, b) => b.averageRating - a.averageRating);
+
+    // If results are found, return a success response with the combined search results
+    res.status(200).json({
+      success: true,
+      message: "Search data retrieved successfully.",
+      searchResults: populatedDoctors,
+    });
+  } catch (error) {
+    console.error("Error in searchDoctorSpecialistCity:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+};
+
+ 
+
+
+
+
+
   
 
 module.exports = {

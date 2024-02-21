@@ -7,9 +7,7 @@ const appointmentBookSchema = new mongoose.Schema(
     appointmentdate: {
       type: Date,
     },
-    appointmenttime: {
-      type: Date,
-    },
+  completestatus:{type:Boolean, default:"0"},
     //message-1,voice-2,video-3
     packgeid: { type: String },
     //amount

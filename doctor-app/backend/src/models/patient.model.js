@@ -18,7 +18,7 @@ const patientSchema = new mongoose.Schema(
     age: { type: Number,default: null },
     weight: { type: Number,default: null },
     image: { type: String },
-    specialist: { type: mongoose.Schema.Types.ObjectId, ref: "specialist" },
+    
     city: { type: String },
     bloodgroup:{ type: String},
     country: { type: mongoose.Schema.Types.ObjectId, ref: "country" },

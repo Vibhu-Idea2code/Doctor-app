@@ -14,6 +14,8 @@ router.get("/list", appointmentController.getAppointments);
 
 router.get("/list-upcomming", appointmentController.getAppointmentstatus);
 
+router.get("/list-completed", appointmentController.getAppointmentstatusComplete);
+
 
 router.get("/list-doctor-id", appointmentController.getAppointmentById);
 

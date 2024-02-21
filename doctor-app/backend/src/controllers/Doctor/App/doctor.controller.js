@@ -1,7 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const { doctorService } = require("../../../services");
-const { Doctor } = require("../../../models");
+const { Doctor, AppointmentBook } = require("../../../models");
 const deleteFiles =require("../../../helpers/deletefile");
 
 
@@ -70,7 +70,6 @@ const deleteDoctor = async (req, res) => {
 
     deleteFiles("doctorImg/" + userData.image);
 
-
     res.status(200).json({
       success: true,
       message: "List of User Data successfully ",
@@ -85,6 +84,9 @@ const deleteDoctor = async (req, res) => {
   }
 };
 
+
+
+
 module.exports = {
-  updateDocProfile,deleteDoctor
+  updateDocProfile,deleteDoctor,
 };

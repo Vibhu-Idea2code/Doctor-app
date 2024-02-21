@@ -18,6 +18,7 @@ const faqRoute = require("./doctor/web/faq.route");
 const helpRoute = require("./doctor/web/help.route");
 const helpDoctorRoute = require("./patient/web/help.route");
 const notificationRoute = require("./patient/app/notification.route");
+const homeScreenDoctorRoute = require("./doctor/app/homescreen.route");
 
 
 
@@ -39,6 +40,7 @@ router.use("/faq", faqRoute);
 router.use("/help", helpRoute);
 router.use("/help-doctor", helpDoctorRoute);
 router.use("/notification", notificationRoute);
+router.use("/homescreen", homeScreenDoctorRoute);
 
 
 router.use("/favoriteDoctor", favoriteRoute);

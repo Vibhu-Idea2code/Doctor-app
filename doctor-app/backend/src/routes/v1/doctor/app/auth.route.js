@@ -30,6 +30,8 @@ router.put(
   doctorController.updateDocProfile
 );
 
+
+
 router.delete("/delete-doc/:doctorId", doctorController.deleteDoctor);
 // router.get('/list',accessToken(),
 // petController.getPetsList);

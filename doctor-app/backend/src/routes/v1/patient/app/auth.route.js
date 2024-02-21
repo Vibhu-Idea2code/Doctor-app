@@ -46,10 +46,4 @@ router.get(
 ); 
 
 
-// router.put(
-//   "/update-doctor-profile",
-//   singleFileUpload("/doctorImg", "image"),
-//   doctorController.updateDocProfile
-// );
-
 module.exports = router;

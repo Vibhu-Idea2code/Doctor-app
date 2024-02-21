@@ -1,38 +1,70 @@
-const AppointmentBook = require('../../../models/appointmentbook.model');
+const AppointmentBook = require("../../../models/appointmentbook.model");
 
 // Create a new appointment
 const createAppointment = async (req, res) => {
   try {
-      const reqBody = req.body;
-      // Generate a 6-digit random number
-      const uniqueid = Math.floor(100000 + Math.random() * 900000);
-      
-      // Add the uniqueid to the request body
-      reqBody.uniqueid = uniqueid;
+    const reqBody = req.body;
+    // Generate a 6-digit random number
+    const uniqueid = Math.floor(100000 + Math.random() * 900000);
 
-      // Capture the current system time
-      const currentTime = new Date();
-      reqBody.appointmentAddedTime = currentTime; // Add the appointment time to the request body
-  
-      const appointment = await AppointmentBook.create(reqBody);
-      if (!appointment) {
-        throw new Error("No such appointment");
-      }
-      res.status(200).json({
-        message: "Successfully created a new appointment",
-        success: true,
-        data: appointment,
-      });
-    } catch (error) {
-      res.status(400).json({ success: false, message: error.message });
+    // Add the uniqueid to the request body
+    reqBody.uniqueid = uniqueid;
+
+    // Extract and format the date from reqBody
+    const appointmentDateParts = reqBody.appointmentdate.split("-");
+    const year = parseInt(appointmentDateParts[2]);
+    const month = parseInt(appointmentDateParts[1]) - 1; // Month is 0-indexed
+    const day = parseInt(appointmentDateParts[0]);
+    const appointmentDate = new Date(Date.UTC(year, month, day));
+
+    // Assign the exact date to the request body
+    reqBody.appointmentdate = appointmentDate;
+
+    // Validate appointmenttime format
+    if (!/^\d{1,2}:\d{2}(am|pm)$/i.test(reqBody.appointmenttime)) {
+      throw new Error(
+        "Invalid appointment time format. Please provide the time in 'HH:mm(am/pm)' format."
+      );
     }
+
+    // Extract hours and minutes from the appointmenttime string
+    const timeParts = reqBody.appointmenttime.split(":");
+    let hours = parseInt(timeParts[0]);
+    let minutes = parseInt(timeParts[1]);
+
+    // Adjust hours and minutes if 'pm' is specified
+    if (reqBody.appointmenttime.includes("pm") && hours !== 12) {
+      hours += 12;
+    }
+
+    // Create a new Date object with the time
+    const appointmentTime =new Date(0, 0, 0, hours, minutes, 0, 0);
+    appointmentTime.setUTCHours(hours, minutes, 0, 0);
+   // Set year, month, and day to 0
+
+    // Assign the exact time to the request body
+    reqBody.appointmenttime = appointmentTime;
+
+    const appointment = await AppointmentBook.create(reqBody);
+    if (!appointment) {
+      throw new Error("No such appointment");
+    }
+    res.status(200).json({
+      message: "Successfully created a new appointment",
+      success: true,
+      data: appointment,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
 };
 
-
-  // Get all appointments
+// Get all appointments
 const getAppointments = async (req, res) => {
   try {
-    const appointments = await AppointmentBook.find().populate('patientid').populate('doctorid');
+    const appointments = await AppointmentBook.find()
+      .populate("patientid")
+      .populate("doctorid");
     res.status(200).json({ success: true, data: appointments });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -42,20 +74,34 @@ const getAppointments = async (req, res) => {
 // Get all appointments
 const getAppointmentstatus = async (req, res) => {
   try {
-    const appointments = await AppointmentBook.find({ appointmentstatus: 0 }).populate('patientid').populate('doctorid');
+    const appointments = await AppointmentBook.find({ appointmentstatus: 0 })
+      .populate("patientid")
+      .populate("doctorid");
     res.status(200).json({ success: true, data: appointments });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 };
 
+const getAppointmentstatusComplete = async (req, res) => {
+  try {
+    const appointments = await AppointmentBook.find({ appointmentstatus: 1 })
+      .populate("patientid")
+      .populate("doctorid");
+    res.status(200).json({ success: true, data: appointments });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
 
 // Get single appointment by ID
 const getAppointmentById = async (req, res) => {
   try {
     const appointment = await AppointmentBook.findById(req.params.id);
     if (!appointment) {
-      return res.status(404).json({ success: false, error: 'Appointment not found' });
+      return res
+        .status(404)
+        .json({ success: false, error: "Appointment not found" });
     }
     res.status(200).json({ success: true, data: appointment });
   } catch (error) {
@@ -66,11 +112,22 @@ const getAppointmentById = async (req, res) => {
 // Update appointment by ID
 const updateAppointment = async (req, res) => {
   try {
-    const appointment = await AppointmentBook.findByIdAndUpdate(req.body.id, req.body, { new: true });
+    const appointment = await AppointmentBook.findByIdAndUpdate(
+      req.body.id,
+      req.body,
+      { new: true }
+    );
     if (!appointment) {
-      return res.status(404).json({ success: false, error: 'Appointment not found' });
+      return res
+        .status(404)
+        .json({ success: false, error: "Appointment not found" });
     }
-    res.status(200).json({ success: true, status:200 ,message:'update review and rating done',data: appointment});
+    res.status(200).json({
+      success: true,
+      status: 200,
+      message: "update review and rating done",
+      data: appointment,
+    });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -78,15 +135,28 @@ const updateAppointment = async (req, res) => {
 
 const updateRescheduleAppointment = async (req, res) => {
   try {
-    const appointment = await AppointmentBook.findByIdAndUpdate(req.body.id, req.body, { new: true });
+    const appointment = await AppointmentBook.findByIdAndUpdate(
+      req.body.id,
+      req.body,
+      { new: true }
+    );
     if (!appointment) {
-      return res.status(404).json({ success: false, error: 'Appointment not found' });
+      return res
+        .status(404)
+        .json({ success: false, error: "Appointment not found" });
     }
-    res.status(200).json({ success: true, status:200 ,message:'update review and rating done',data: appointment});
+    res.status(200).json({
+      success: true,
+      status: 200,
+      message: "update review and rating done",
+      data: appointment,
+    });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+
 
 // Delete appointment by ID
 // const deleteAppointment = async (req, res) => {
@@ -108,5 +178,5 @@ module.exports = {
   updateAppointment,
   getAppointmentstatus,
   // deleteAppointment,
-  updateRescheduleAppointment
+  updateRescheduleAppointment,getAppointmentstatusComplete,
 };
