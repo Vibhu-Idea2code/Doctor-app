@@ -1,13 +1,14 @@
 const mongoose = require("mongoose");
 const Specialist = require("../../../models/speciality.model");
 
+/* ---------------------------- CREATE SPECIALIST --------------------------- */
 const createspecialist = async (req, res) => {
   try {
     const reqBody = req.body;
     if (req.file) {
       reqBody.image = req.file.filename;
     }
-    console.log(reqBody, "++++++specilalist");
+    // console.log(reqBody, "++++++specilalist");
     const specialist = await Specialist.create(reqBody);
     if (!specialist) { 
       throw new Error("no such specialist");
@@ -21,7 +22,7 @@ const createspecialist = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
-  
+/* ---------------------------- UPDATE SPECIALIST --------------------------- */
 const updatespecialistProfile = async (req, res) => {
   try {
     const reqbody = req.body;
@@ -53,17 +54,17 @@ const updatespecialistProfile = async (req, res) => {
     res.status(400).json({ success: false, error: err.message });
   }
 };
-
-// const getPetsList = async (req, res) => {
-//   try {
-//     let pets = await petsService.getPetsList(req, res);
-//     res.status(200).json({
-//       message: "successfully fetched all Pets",
-//       status: true,
-//       data: pets,
-//     });
-//   } catch (error) {
-//     res.status(400).json({ success: false, message: error.message });
-//   }
-// };
-module.exports = { createspecialist,updatespecialistProfile };
+ /* --------------------------- ALL LIST SPECIALIST -------------------------- */
+const getSpecialList = async (req, res) => {
+  try {
+    let specialist = await Specialist.find();
+    res.status(200).json({
+      message: "successfully fetched all Specialist",
+      status: true,
+      data: specialist,
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+module.exports = { createspecialist,updatespecialistProfile,getSpecialList };

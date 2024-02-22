@@ -1,6 +1,6 @@
 const AppointmentBook = require("../../../models/appointmentbook.model");
 
-// Create a new appointment
+/* --------------------------- CREATE APPOINTMENT --------------------------- */
 const createAppointment = async (req, res) => {
   try {
     const reqBody = req.body;
@@ -38,9 +38,9 @@ const createAppointment = async (req, res) => {
     }
 
     // Create a new Date object with the time
-    const appointmentTime =new Date(0, 0, 0, hours, minutes, 0, 0);
+    const appointmentTime = new Date(0, 0, 0, hours, minutes, 0, 0);
     appointmentTime.setUTCHours(hours, minutes, 0, 0);
-   // Set year, month, and day to 0
+    // Set year, month, and day to 0
 
     // Assign the exact time to the request body
     reqBody.appointmenttime = appointmentTime;
@@ -59,7 +59,7 @@ const createAppointment = async (req, res) => {
   }
 };
 
-// Get all appointments
+/* ------------------------EXTRA GET ALL APPOINTMENT LIST ------------------------ */
 const getAppointments = async (req, res) => {
   try {
     const appointments = await AppointmentBook.find()
@@ -71,7 +71,7 @@ const getAppointments = async (req, res) => {
   }
 };
 
-// Get all appointments
+/* ---------------- LIST UPCOMMINT OF APPOINTMENT FOR PATIENT --------------- */
 const getAppointmentstatus = async (req, res) => {
   try {
     const appointments = await AppointmentBook.find({ appointmentstatus: 0 })
@@ -82,8 +82,19 @@ const getAppointmentstatus = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-
+/* ---------------- LIST COMPLETE OF APPOINTMENT FOR PATIENT --------------- */
 const getAppointmentstatusComplete = async (req, res) => {
+  try {
+    const appointments = await AppointmentBook.find({ appointmentstatus: 2 })
+      .populate("patientid")
+      .populate("doctorid");
+    res.status(200).json({ success: true, data: appointments });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+/* ---------------- LIST RUNNING OF APPOINTMENT FOR PATIENT AND DOCTOR(EXTRA) --------------- */
+const getAppointmentstatusVideoChatSms = async (req, res) => {
   try {
     const appointments = await AppointmentBook.find({ appointmentstatus: 1 })
       .populate("patientid")
@@ -94,7 +105,7 @@ const getAppointmentstatusComplete = async (req, res) => {
   }
 };
 
-// Get single appointment by ID
+ /* ------------------ LIST DOCTOR ID ONLY APPOINTMENT EXTRA ----------------- */
 const getAppointmentById = async (req, res) => {
   try {
     const appointment = await AppointmentBook.findById(req.params.id);
@@ -107,9 +118,10 @@ const getAppointmentById = async (req, res) => {
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
+  K;
 };
 
-// Update appointment by ID
+/* --------------------- UPDATE REVIEW RATING BY PATIENT -------------------- */
 const updateAppointment = async (req, res) => {
   try {
     const appointment = await AppointmentBook.findByIdAndUpdate(
@@ -132,7 +144,7 @@ const updateAppointment = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-
+/* --------------------- UPDATE RESCHEDULE BY PATIENT -------------------- */
 const updateRescheduleAppointment = async (req, res) => {
   try {
     const appointment = await AppointmentBook.findByIdAndUpdate(
@@ -156,8 +168,6 @@ const updateRescheduleAppointment = async (req, res) => {
   }
 };
 
-
-
 // Delete appointment by ID
 // const deleteAppointment = async (req, res) => {
 //   try {
@@ -178,5 +188,7 @@ module.exports = {
   updateAppointment,
   getAppointmentstatus,
   // deleteAppointment,
-  updateRescheduleAppointment,getAppointmentstatusComplete,
+  updateRescheduleAppointment,
+  getAppointmentstatusComplete,
+  getAppointmentstatusVideoChatSms,
 };

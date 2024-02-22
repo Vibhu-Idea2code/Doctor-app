@@ -8,7 +8,7 @@ const { Doctor, Patient } = require("../../../models");
 const ejs = require("ejs");
 const path = require("path");
 
-/* -------------------------- REGISTER/CREATE USER -------------------------- */
+/* -------------------------- REGISTER/CREATE PATIENT -------------------------- */
 const register = async (req, res) => {
   // const { email, password, role } = req.body;
   try {
@@ -93,7 +93,7 @@ const login = async (req, res) => {
   }
 };
 
-//   /* -------------------------- LOGIN WITH PHONE NUMBER WITH OTP  -------------------------- */
+/* --------------------- FORGOT PASSWORD SEND WITH EMAIL -------------------- */
 const forgotPass = async (req, res) => {
   try {
     const { email, name } = req.body;
@@ -132,12 +132,12 @@ const forgotPass = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
-
+/* ----------------------- VERIFICATION OTP WITH EMAIL ---------------------- */
 const verifyOtp = async (req, res) => {
   try {
     const { otp, email } = req.body;
 
-    const doctor = await Patient.findOne({ phoneNumber });
+    const doctor = await Patient.findOne({ email });
 
     // Check if user exists
     if (!doctor) {
@@ -167,7 +167,7 @@ const verifyOtp = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
+/* ----------------------------- reset password ----------------------------- */
 const resetPassword = async (req, res) => {
   try {
     const { newPassword, confirmPassword, id } = req.body;
@@ -199,36 +199,7 @@ const resetPassword = async (req, res) => {
   }
 };
 
-const country = async (req, res) => {
-  try {
-    const { id } = req.body;
-
-    console.log(id);
-
-    if (newPassword !== confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "New password and confirm password do not match.",
-      });
-    }
-    let patient = await Patient.findById(id);
-    // Checking if the user is in the database or not
-    if (!patient) {
-      return res.status(400).json({
-        success: false,
-        message: "User does not exist!",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Password reset successfully!",
-      data: patient,
-    });
-  } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
-  }
-};
+/* ----------------------------- CHANGE PASSWORD ---------------------------- */
 
 const changePassword = async (req, res) => {
   try {
@@ -274,6 +245,6 @@ module.exports = {
   verifyOtp,
   login,
   resetPassword,
-  country,
+
   changePassword,
 };

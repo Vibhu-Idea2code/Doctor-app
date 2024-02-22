@@ -1,0 +1,138 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table notification {
+  id integer [primary key]
+  title varchar
+  description varchar
+  status varchar
+  created_at timestamp 
+}
+Table faq {
+  id integer [primary key]
+  question varchar
+  ans varchar
+  status varchar
+  patientId integer
+  doctorId integer
+  created_at timestamp 
+}
+
+Table specialist {
+  id integer [primary key]
+  name varchar
+  image varchar
+  status varchar
+  created_at timestamp 
+}
+Table doctor {
+  id integer [primary key]
+  name varchar
+  email varchar
+  password varchar
+  token varchar
+  phoneNumber  integer
+  refreshToken varchar
+  otp integer
+  otpExpiry varchar
+  expiration varchar
+  gender varchar
+  videocallPrice  integer
+  messagecallPrice integer
+  voicecallPrice integer
+  image varchar
+  country_id integer
+  specialist_id integer
+  city varchar
+  fcm_token varchar
+  created_at timestamp
+}
+
+Table patient {
+  id integer [primary key]
+  name varchar
+  email varchar
+  password varchar
+  token varchar
+  phoneNumber  integer
+  refreshToken varchar
+  otp integer
+  otpExpiry varchar
+  expiration varchar
+  gender varchar
+  age  integer
+  weight integer
+  bloodgroup varchar
+  image varchar
+  country_id integer
+  specialist_id integer
+  city varchar
+  fcm_token varchar
+  created_at timestamp
+}
+Table country {
+  id integer [primary key]
+  name varchar
+  countryflag varchar
+  status varchar
+  created_at timestamp
+}
+
+Table helpDoctor {
+  id integer [primary key]
+  doctorId integer
+  question varchar
+  status varchar
+  created_at timestamp
+}
+Table helpPateint {
+  id integer [primary key]
+  pateintId integer
+  question varchar
+  status varchar
+  created_at timestamp
+}
+Table favoriteDoctor {
+  id integer [primary key]
+  pateintId integer
+  doctorid integer
+   status varchar
+  created_at timestamp
+}
+
+Table appointmentbook {
+  id integer [primary key]
+  patientid integer
+  doctorid integer
+  symptoms varchar 
+   status varchar
+   review varchar
+   rating integer
+   reschedulereason varchar
+   appointmentstatus varchar
+   paymentstatus varchar
+   paymentamount integer
+   packgeid varchar
+   uniqueid integer
+   appointmentdate date
+   appointmenttime date
+  created_at timestamp
+}
+
+Ref: patient.id < appointmentbook.patientid
+Ref: doctor.id < appointmentbook.doctorid
+
+Ref: patient.id < favoriteDoctor.pateintId
+Ref: doctor.id < favoriteDoctor.doctorid
+
+Ref: patient.id < faq.pateintId
+Ref: doctor.id < faq.doctorid
+
+Ref: patient.id < helpPateint.pateintId
+Ref: doctor.id < helpDoctor.doctorId
+
+
+
+Ref: specialist.id < doctor.specialist_id
+Ref: country.id < doctor.country_id
+Ref: country.id < patient.country_id

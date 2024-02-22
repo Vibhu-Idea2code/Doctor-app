@@ -1,10 +1,11 @@
+/* ------------------------------- DEFINE AREA ------------------------------ */
 const path = require("path");
 const fs = require("fs");
 const { doctorService } = require("../../../services");
 const { Doctor, AppointmentBook } = require("../../../models");
 const deleteFiles =require("../../../helpers/deletefile");
 
-
+/* ------------------ NOTE : ALL DETAILS ABOUT DOCTOR  ------------------ */
 /* ----------------------------- update Doctor profile ----------------------------- */
 const updateDocProfile = async (req, res) => {
   try {
@@ -13,6 +14,9 @@ const updateDocProfile = async (req, res) => {
     // If there's a file uploaded, remove any existing image first
     if (req.file) {
       const user = await Doctor.findById(reqbody.doctorId);
+      if(!user){
+        return res.status(401).json({ message: "Doctor not found!"})
+      }
       if (user && user.image) {
         // Delete the existing image
         const imagePath = path.join(__dirname, "/../../../public/doctorImg", user.image);
@@ -53,10 +57,7 @@ const updateDocProfile = async (req, res) => {
     res.status(400).json({ success: false, error: err.message });
   }
 };
-
-
-
-
+/* -------------------------- DELETE DOCTOR PROFILE WITH IMAGE------------------------- */
 const deleteDoctor = async (req, res) => {
   try {
     const userData = await Doctor.findById(req.params.doctorId);

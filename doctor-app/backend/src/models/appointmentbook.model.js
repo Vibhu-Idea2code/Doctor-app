@@ -3,20 +3,22 @@ const mongoose = require("mongoose");
 const appointmentBookSchema = new mongoose.Schema(
   {
     uniqueid: { type: String },
-    symptoms: { type: String },
+
     appointmentdate: {
       type: Date,
     },
-  completestatus:{type:Boolean, default:"0"},
+    appointmenttime: {
+      type: Date,
+    },
     //message-1,voice-2,video-3
     packgeid: { type: String },
     //amount
     paymentamount: { type: Number, default: 0 },
     //paid or pending or fail
     paymentstatus: { type: String, default: "0" },
-    // 1-completed, 0-upcomming
+    // 1-runnig, 0-upcomming/pending , 2-completed
     appointmentstatus: { type: String, default: "0" },
-    cancelreason: { type: String, default: "null" },
+    // cancelreason: { type: String, default: "null" },
     reschedulereason: { type: String, default: "null" },
     review: { type: String, default: "null" },
     rating: { type: Number },
@@ -31,12 +33,11 @@ const appointmentBookSchema = new mongoose.Schema(
     symptoms: {
       type: String,
     },
-    status:{type:Boolean, default:true},
+    status: { type: Boolean, default: true },
 
-    reasonrescheduleappointment : {
-      type:String,
-    }, 
-  
+    reasonrescheduleappointment: {
+      type: String,
+    },
   },
   {
     timestamps: true,

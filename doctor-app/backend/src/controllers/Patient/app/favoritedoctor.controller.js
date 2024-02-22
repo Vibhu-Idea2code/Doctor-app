@@ -1,7 +1,7 @@
 const { Doctor, AppointmentBook } = require("../../../models");
 const FavoriteDoctor = require("../../../models/favoritedoctor.model");
 
-// Create a new appointment
+/* -------------------- CREATE FAVORITE DOCTOR BY PATIENT ------------------- */
 const createFavoriteDoctor = async (req, res) => {
   try {
     const reqBody = req.body;
@@ -36,7 +36,7 @@ const createFavoriteDoctor = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
-
+/* ------------------------------ FAVORITE LIST ----------------------------- */
 const getFavoriteDoctorList = async (req, res) => {
   try {
     const reqbody = req.body;

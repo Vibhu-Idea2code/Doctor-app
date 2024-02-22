@@ -22,6 +22,10 @@ const patientSchema = new mongoose.Schema(
     city: { type: String },
     bloodgroup:{ type: String},
     country: { type: mongoose.Schema.Types.ObjectId, ref: "country" },
+    fcm_token: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,

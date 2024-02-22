@@ -25,6 +25,10 @@ const doctorSchema = new mongoose.Schema(
     city: { type: String },
     rating: { type: mongoose.Schema.Types.ObjectId, ref: "appointmentbook" },
   completeappointment:{type:Boolean, default:"0"},
+  fcm_token: {
+    type: String,
+    default: "",
+  },
   },
   {
     timestamps: true,

@@ -1,45 +1,42 @@
+/* ------------------------------- DEFINE AREA ------------------------------ */
 const express = require("express");
-
 const router = express.Router();
-const {
-  refreshToken,
-  accessToken,
-} = require("../../../../middleware/doctorAuth");
-
-const { singleFileUpload } = require("../../../../helpers/upload");
+const {    accessToken,} = require("../../../../middleware/doctorAuth");
 const { homeScreenDoctorController } = require("../../../../controllers");
 
-router.get("/search-pateint", homeScreenDoctorController.searchPatientlist);
+/* ------------------------ SEARCH PATIENT BY DOCTOR ------------------------ */
+router.get("/search-pateint",
+// accessToken(),
+ homeScreenDoctorController.searchPatientlist);
 
+/* ------------------- LIST PATEINT REVIEW SHOW BY DOCTOR ------------------- */
 router.get('/list-patient-review',
+// accessToken(),
 homeScreenDoctorController.allPatientAppointmentListReview);
+/* -------------- LIST PATIENT DATE WISE SHOW BY DOCTOR -------------- */
 router.get('/list-patient-date-wise',
+// accessToken(),
 homeScreenDoctorController.allPatientAppointmentList);
+
+/* ----------------- LIST OF ALL OVER PATIENT LIST BY DOCTOR ID ---------------- */
 router.get('/list-patient',
+// accessToken(),
 homeScreenDoctorController.PatientAppointmentList);
+
+/* ---------------- RESCHEDULE APPOINTMENT PATIENT BY DOCTOR ---------------- */
 router.put(
     "/reschedule-appointment-patient-by-doctor",
+    // accessToken(),
     homeScreenDoctorController.updateAppointmentByDoctor
   );
 
+  /* -------------- COMPLETE APPOINTMENT STATUS UPDATE BY DOCTOR -------------- */
   router.put(
     "/complete-appointment-patient-by-doctor-status",
+    // accessToken(),
     homeScreenDoctorController.updateAppointmentStatusByDoctor
   );
   
-
-// router.get('/id/:petsId',
-// petController.getPetsId);
-
-// router.delete('/delete/:petsId',
-// petController.deletePets);
-
-// router.put('/update/:petsId',
-// petController.updatePets);
-
-// router.delete("/delete-many", petController.multipleDelete);
-
-// router.put("/updatePetStatus/:id",petController.updatePetStatus);
 
 module.exports = router;
 

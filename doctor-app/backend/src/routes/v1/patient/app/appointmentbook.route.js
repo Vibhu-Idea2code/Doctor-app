@@ -1,27 +1,48 @@
+/* ------------------------------- DEFINE AREA ------------------------------ */
 const express = require("express");
-
 const router = express.Router();
 const {
-  refreshToken,
   accessToken,
-} = require("../../../../middleware/doctorAuth");
+} = require("../../../../middleware/patientAuth");
 const { appointmentController } = require("../../../../controllers");
-// const { singleFileUpload } = require("../../../../helpers/upload");
 
-router.post("/add-appointment", appointmentController.createAppointment);
+/* --------------------------- CREATE APPOINTMENT --------------------------- */
+router.post("/add-appointment",
+// accessToken(),
+ appointmentController.createAppointment);
 
-router.get("/list", appointmentController.getAppointments);
+ /* ------------------------EXTRA GET ALL APPOINTMENT LIST ------------------------ */
+router.get("/list",
+// accessToken(), 
+appointmentController.getAppointments);
 
-router.get("/list-upcomming", appointmentController.getAppointmentstatus);
+/* ---------------- LIST UPCOMMINT OF APPOINTMENT FOR PATIENT --------------- */
+router.get("/list-upcomming", 
+// accessToken(),
+appointmentController.getAppointmentstatus);
+/* ---------------- LIST COMPLETE OF APPOINTMENT FOR PATIENT --------------- */
+router.get("/list-completed", 
+// accessToken(),
+appointmentController.getAppointmentstatusComplete);
 
-router.get("/list-completed", appointmentController.getAppointmentstatusComplete);
+/* ---------------- LIST RUNNING OF APPOINTMENT FOR PATIENT AND DOCTOR(EXTRA) --------------- */
+router.get("/list-video-sms-voice",
+// accessToken(), 
+appointmentController.getAppointmentstatusVideoChatSms);
 
+/* ------------------ LIST DOCTOR ID ONLY APPOINTMENT EXTRA ----------------- */
+router.get("/list-doctor-id", 
+// accessToken(),
+appointmentController.getAppointmentById);
 
-router.get("/list-doctor-id", appointmentController.getAppointmentById);
-
-router.put("/update-review-rating", appointmentController.updateAppointment);
+/* --------------------- UPDATE REVIEW RATING BY PATIENT -------------------- */
+router.put("/update-review-rating",
+// accessToken(),
+ appointmentController.updateAppointment);
+ /* --------------------- UPDATE RESCHEDULE BY PATIENT -------------------- */
 router.put(
   "/update-reschedule-appointment",
+  // accessToken(),
   appointmentController.updateAppointment
 );
 

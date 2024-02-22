@@ -1,3 +1,4 @@
+/* ------------------------------- DEFINE AREA ------------------------------ */
 const bcrypt = require("bcrypt");
 const moment = require("moment");
 const jwt = require("jsonwebtoken");
@@ -7,11 +8,13 @@ const { doctorService, emailService } = require("../../../services");
 const { Doctor } = require("../../../models");
 const ejs = require("ejs");
 const path = require("path");
+
+/* ---------------------- NOTE :ALL DETAIL ABOUT ONLY DOCTOR --------------------- */
 /* -------------------------- REGISTER/CREATE DOCTOR -------------------------- */
 const register = async (req, res) => {
   // const { email, password, role } = req.body;
   try {
-    const { email, password, name, phoneNumber, confirmPassword, city } =
+    const { email, password, name, phoneNumber, confirmPassword, city,fcm_token } =
       req.body;
     const reqBody = req.body;
     const existingUser = await doctorService.findDoctorByEmail(reqBody.email);
@@ -31,7 +34,7 @@ const register = async (req, res) => {
       exp: moment().add(1, "days").unix(),
     };
 
-    const token = await jwt.sign(option, jwtSecrectKey);
+    const token = await jwt.sign(option, process.env.JWT_SECRET_KEY);
 
     const filter = {
       email,
@@ -40,6 +43,7 @@ const register = async (req, res) => {
       password: hashPassword,
       token,
       city,
+      fcm_token,
     };
     const data = await doctorService.createDoctor(filter);
     res.status(200).json({ success: true, data: data });
@@ -51,7 +55,7 @@ const register = async (req, res) => {
 /* -------------------------- LOGIN/SIGNIN DOCTOR  0-new 1-already -------------------------- */
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body; // Assuming "identifier" can be either email or name
+    const { email, password,fcm_token } = req.body; // Assuming "identifier" can be either email or name
     // const doctor = await Doctor.findOne({
     //   $or: [{ email: identifier }, { name: identifier }],
     // });
@@ -71,6 +75,7 @@ const login = async (req, res) => {
     });
 
     doctor.token = token;
+    doctor.fcm_token = fcm_token;
     const refreshToken = await jwt.sign(
       payload,
       process.env.JWT_REFRESH_SECRET_KEY

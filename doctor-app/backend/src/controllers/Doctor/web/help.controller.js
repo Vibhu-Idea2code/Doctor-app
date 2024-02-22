@@ -2,9 +2,14 @@ const mongoose = require("mongoose");
 const Help = require("../../../models/help.model");
 const ejs = require("ejs");
 const path = require("path");
-const { emailService, doctorService, patientService } = require("../../../services");
+const {
+  emailService,
+  doctorService,
+  patientService,
+} = require("../../../services");
 const { Patient, Doctor } = require("../../../models");
 
+/* ------------------------------- CREATE HELP WITH SEND EMAIL PATEINT  SIDE MANGE ------------------------------ */
 const createHelp = async (req, res) => {
   try {
     // Retrieve patient details using patientId
@@ -56,6 +61,5 @@ const createHelp = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
-
 
 module.exports = { createHelp };

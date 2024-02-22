@@ -54,7 +54,7 @@ const updatepatientProfile = async (req, res) => {
     res.status(400).json({ success: false, error: err.message });
   }
 };
-
+/* -------------------------- DLETE PATIENT PROFILE ------------------------- */
 const deletePatient = async (req, res) => {
   try {
     const userData = await Patient.findById(req.params.patientId);

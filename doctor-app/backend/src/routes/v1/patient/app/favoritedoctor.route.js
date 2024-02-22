@@ -5,26 +5,24 @@ const router = express.Router();
 const {
   refreshToken,
   accessToken,
-} = require("../../../../middleware/doctorAuth");
+} = require("../../../../middleware/patientAuth");
 const {  favoriteDoctorController } = require("../../../../controllers");
-// const { singleFileUpload } = require("../../../../helpers/upload");
 
+/* --------------------- add favorite doctor by patient --------------------- */
 router.post(
     "/add-favorite-doctor",
+    // accessToken(),
     favoriteDoctorController.createFavoriteDoctor
   );
 
-
+/* ---------------------------- LIST OF FAVORITE ---------------------------- */
 router.get(
   "/list",
+  // accessToken(),
   favoriteDoctorController.getFavoriteDoctorList
 );
 
 
-// router.get(
-//   "/list-doctor-id",
-//   appointmentController.getAppointmentById
-// );
-  
+
 
 module.exports = router;

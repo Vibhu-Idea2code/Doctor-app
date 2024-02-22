@@ -5,15 +5,13 @@ const {
   refreshToken,
   accessToken,
 } = require("../../../../middleware/doctorAuth");
-const {  countryController } = require("../../../../controllers");
+const { countryController } = require("../../../../controllers");
 const { singleFileUpload } = require("../../../../helpers/upload");
 
 router.post(
-    "/add-country",
-    
-    singleFileUpload("/country-images/", "countryflag"),
-    countryController.createCountry
-  );
-  
+  "/add-country",
+  singleFileUpload("/country-images/", "countryflag"),
+  countryController.createCountry
+);
 
 module.exports = router;

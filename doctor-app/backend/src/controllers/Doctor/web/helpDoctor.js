@@ -4,10 +4,10 @@ const ejs = require("ejs");
 const path = require("path");
 const {
   emailService,
- 
 } = require("../../../services");
 const {  Doctor, helpDoctor } = require("../../../models");
 
+/* ------------------- CREATE HELP AND SEND MAIL OF DOCTOR ------------------ */
 const createHelp = async (req, res) => {
   try {
     // Retrieve Doctor details using DoctorId

@@ -4,6 +4,7 @@ const specialistSchema = new mongoose.Schema(
   {
     name: { type: String },
     image:{type:String,},
+    status:{type:Boolean,default:true},
   },
   {
     timestamps: true,

@@ -95,7 +95,7 @@ const allSpecialList = async (req, res) => {
   }
 };
 
-/* ----------------------------- Get particuler News search data ----------------------------- */
+/* ----------- SEARCH FILTER WITH CITY AND SPECIALIST(SEARCH API) ----------- */
 const searchDoctorSpecialist = async (req, res) => {
   try {
     const { query } = req.query;

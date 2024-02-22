@@ -11,6 +11,7 @@ const favoriteSchema = new mongoose.Schema(
      type: mongoose.Schema.Types.ObjectId,
      ref: "doctor",
    },
+   status:{type:Boolean, befault:true},
   },
   {
     timestamps: true,

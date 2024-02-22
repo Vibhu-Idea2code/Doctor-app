@@ -4,7 +4,7 @@ module.exports.doctorDetailController = require("./Patient/app/docotrdetail.cont
 
 
 module.exports.specialistController = require("./Doctor/web/specialist.controller");
-module.exports.diseaseController = require("./Doctor/web/disease.controller");
+
 module.exports.helpController = require("./Doctor/web/help.controller");
 
 module.exports.homeScreenDoctorController = require("./Doctor/App/homeScreen.controller");
