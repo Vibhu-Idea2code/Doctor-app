@@ -23,13 +23,13 @@ const register = async (req, res) => {
     const hashPassword = await bcrypt.hash(password, 8);
     if (password !== confirmPassword) {
       return res.status(400).json({
+        status:400,
         success: false,
         message: "New password and confirm password do not match.",
       });
     }
     let option = {
       email,
-
       exp: moment().add(1, "days").unix(),
     };
 
@@ -41,13 +41,11 @@ const register = async (req, res) => {
       password: hashPassword,
       token,
       phoneNumber,
-      
-      
     };
     const data = await patientService.createPatient(filter);
-    res.status(200).json({ success: true, data: data });
+    res.status(200).json({status:200, success: true, data: data });
   } catch (err) {
-    res.status(500).json({ err: err.message });
+    res.status(500).json({ status:500,sucess: false, error: err.message });
   }
 };
 
@@ -83,13 +81,16 @@ const login = async (req, res) => {
       process.env.BASE_URL_PROFILE_PATH;
 
     res.status(200).json({
+      status: 200,
+      success: true,
+      message:"create patient successfully",
       data: output,
       token: token,
       refreshToken: refreshToken,
       baseUrl: baseUrl,
     });
   } catch (error) {
-    res.status(404).json({ error: error.message });
+    res.status(404).json({status:404,sucess:false, error: error.message });
   }
 };
 
@@ -98,7 +99,7 @@ const forgotPass = async (req, res) => {
   try {
     const { email, name } = req.body;
     const findUser = await patientService.findPatientByEmail(email);
-    console.log(findUser);
+    // console.log(findUser);
     if (!findUser) throw Error("User not found");
     const otp = ("0".repeat(4) + Math.floor(Math.random() * 10 ** 4)).slice(-4);
     findUser.otp = otp;
@@ -123,13 +124,14 @@ const forgotPass = async (req, res) => {
       }
     );
     res.status(200).json({
+      status: 200,
       success: true,
       message: "User login successfully!",
       // data: { data },
       data: `user otp is stored ${otp}`,
     });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    res.status(400).json({status:400, success: false, message: error.message });
   }
 };
 /* ----------------------- VERIFICATION OTP WITH EMAIL ---------------------- */
@@ -164,7 +166,7 @@ const verifyOtp = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({status:500, error: error.message });
   }
 };
 /* ----------------------------- reset password ----------------------------- */
@@ -172,10 +174,11 @@ const resetPassword = async (req, res) => {
   try {
     const { newPassword, confirmPassword, id } = req.body;
 
-    console.log(id);
+    // console.log(id);
 
     if (newPassword !== confirmPassword) {
       return res.status(400).json({
+        status: 400,
         success: false,
         message: "New password and confirm password do not match.",
       });
@@ -184,18 +187,20 @@ const resetPassword = async (req, res) => {
     // Checking if the user is in the database or not
     if (!patient) {
       return res.status(400).json({
+        status: 400,
         success: false,
         message: "User does not exist!",
       });
     }
 
     res.status(200).json({
+      status: 200,
       success: true,
       message: "Password reset successfully!",
       data: patient,
     });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    res.status(400).json({status:400, success: false, message: error.message });
   }
 };
 
@@ -204,26 +209,26 @@ const resetPassword = async (req, res) => {
 const changePassword = async (req, res) => {
   try {
     const { oldpass, newpass, confirmpass, patientId } = req.body; // assuming patientId is provided in the request body
-    console.log(req.body, "++++++++++++++");
+    // console.log(req.body, "++++++++++++++");
 
     // Find the patient by their ID
     const patient = await Patient.findById(patientId);
-    console.log(patient, "++++++++++++++++++++++++++++++++");
+    // console.log(patient, "++++++++++++++++++++++++++++++++");
     if (!patient) {
-      return res.status(404).json({ error: "Patient not found" });
+      return res.status(404).json({status:404,success:false, error: "Patient not found" });
     }
 
     // Verify the old password
     const isPasswordCorrect = await bcrypt.compare(oldpass, patient.password);
     if (!isPasswordCorrect) {
-      return res.status(401).json({ error: "Incorrect old password" });
+      return res.status(401).json({status:401,success:false, error: "Incorrect old password" });
     }
 
     // Check if the new password and confirm password match
     if (newpass !== confirmpass) {
       return res
         .status(400)
-        .json({ error: "New password and confirm password do not match" });
+        .json({status:400,success:false, error: "New password and confirm password do not match" });
     }
 
     // Hash the new password and update it in the database
@@ -233,9 +238,9 @@ const changePassword = async (req, res) => {
 
     return res
       .status(200)
-      .json({ success: true, message: "Password updated successfully" });
+      .json({ status:200,success: true, message: "Password updated successfully" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({status:500,success: false, error: error.message });
   }
 };
 

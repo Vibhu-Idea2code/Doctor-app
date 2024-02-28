@@ -15,7 +15,9 @@ const allPatientAppointmentList = async (req, res) => {
 
     // Check if both doctorid and appointmentdate are provided in the request body
     if (!doctorid || !appointmentdate) {
-      return res.status(400).json({
+      return res.status(404).json({
+        status:404,
+        success: false,
         message:
           "Both doctorid and appointmentdate are required in the request body",
       });
@@ -35,6 +37,8 @@ const allPatientAppointmentList = async (req, res) => {
 
     if (!userData || userData.length === 0) {
       return res.status(404).json({
+        status:404,
+        success:false,
         message:
           "User data not found for the provided doctorid and appointmentdate",
       });
@@ -48,12 +52,14 @@ const allPatientAppointmentList = async (req, res) => {
     }));
 
     res.status(200).json({
+      status:200,
       success: true,
       message: "List of User Data successfully ",
       user: formattedUserData,
     });
   } catch (error) {
     res.status(500).json({
+      status:500,
       success: false,
       message: error.message,
     });
@@ -96,18 +102,22 @@ const PatientAppointmentList = async (req, res) => {
 
     if (!userData || userData.length === 0) {
       return res.status(404).json({
+        status:400,
+        success:false,
         message:
           "User data not found for the provided doctorid and appointmentdate",
       });
     }
 
     res.status(200).json({
+      status:200,
       success: true,
       message: "List of User Data successfully ",
       user: userData,
     });
   } catch (error) {
     res.status(500).json({
+      status:500,
       success: false,
       message: error.message,
     });
@@ -122,6 +132,8 @@ const allPatientAppointmentListReview = async (req, res) => {
     // Check if both doctorid and appointmentdate are provided in the request body
     if (!doctorid) {
       return res.status(400).json({
+        status: 400,
+        success:false,
         message:
           "Both doctorid and appointmentdate are required in the request body",
       });
@@ -141,18 +153,22 @@ const allPatientAppointmentListReview = async (req, res) => {
 
     if (!userData || userData.length === 0) {
       return res.status(404).json({
+        status: 404,
+      success:fasle,
         message:
           "User data not found for the provided doctorid and appointmentdate",
       });
     }
 
     res.status(200).json({
+      status: 200,
       success: true,
       message: "List of User Data successfully ",
       user: userData,
     });
   } catch (error) {
     res.status(500).json({
+      status:500,
       success: false,
       message: error.message,
     });
@@ -208,7 +224,7 @@ const updateAppointmentByDoctor = async (req, res) => {
     if (!appointment) {
       return res
         .status(404)
-        .json({ success: false, error: "Appointment not found" });
+        .json({status:404, success: false, error: "Appointment not found" });
     }
     res.status(200).json({
       success: true,
@@ -217,7 +233,7 @@ const updateAppointmentByDoctor = async (req, res) => {
       data: appointment,
     });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({status:500, success: false, error: error.message });
   }
 };
 
@@ -232,7 +248,7 @@ const updateAppointmentStatusByDoctor = async (req, res) => {
     if (!appointment) {
       return res
         .status(404)
-        .json({ success: false, error: "Appointment not found" });
+        .json({status:404, success: false, error: "Appointment not found" });
     }
     res.status(200).json({
       success: true,
@@ -254,7 +270,8 @@ const searchPatientlist = async (req, res) => {
 
     // Check if query parameter is provided
     if (!query) {
-      return res.status(400).json({
+      return res.status(404).json({
+        status:404,
         success: false,
         message: "Query parameter is missing.",
       });
@@ -267,20 +284,23 @@ const searchPatientlist = async (req, res) => {
 
     if (patients.length === 0) {
       return res.status(404).json({
+        status:404,
         success: false,
         message: "No patients found matching the query.",
       });
     }
     // Return the found patients
     return res.status(200).json({
+      status: 200,
       success: true,
       message: "Patients found.",
       data: patients,
     });
   } catch (error) {
     // Handle any errors that occur during the search
-    console.error("Error searching patients:", error);
+    // console.error("Error searching patients:", error);
     return res.status(500).json({
+      status: 500,
       success: false,
       message: "Internal server error.",
     });
@@ -293,7 +313,8 @@ const searchDoctorSpecialist = async (req, res) => {
 
     // Check if query parameter is provided
     if (!query) {
-      return res.status(400).json({
+      return res.status(404).json({
+        status: 404,
         success: false,
         message: "Query parameter is missing.",
       });
@@ -316,6 +337,7 @@ const searchDoctorSpecialist = async (req, res) => {
 
     if (combinedResults.length === 0) {
       return res.status(404).json({
+        status: 404,
         success: false,
         message:
           "No matching doctors or specialists found for the given query.",
@@ -323,13 +345,14 @@ const searchDoctorSpecialist = async (req, res) => {
     }
     // If results are found, return a success response with the combined search results
     res.status(200).json({
+      status: 200,
       success: true,
       message: "Search data retrieved successfully.",
       searchResults: combinedResults,
     });
   } catch (error) {
-    console.error("Error in searchDoctorSpecialist:", error);
-    res.status(500).json({ success: false, error: "Internal Server Error" });
+    // console.error("Error in searchDoctorSpecialist:", error);
+    res.status(500).json({status:500, success: false, error: "Internal Server Error" });
   }
 };
 

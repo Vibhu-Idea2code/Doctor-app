@@ -19,7 +19,7 @@ const createHelp = async (req, res) => {
     }
 
     // Log the user object to see its contents
-    console.log("User:", user);
+    // console.log("User:", user);
 
     // Create a new help record
     const newHelp = await new Help({
@@ -54,11 +54,12 @@ const createHelp = async (req, res) => {
     );
 
     res.status(200).json({
+      status:200,
       message: "Successfully created a new help",
       success: true,
     });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    res.status(400).json({status:400, success: false, message: error.message });
   }
 };
 

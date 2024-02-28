@@ -11,14 +11,14 @@ const {  favoriteDoctorController } = require("../../../../controllers");
 /* --------------------- add favorite doctor by patient --------------------- */
 router.post(
     "/add-favorite-doctor",
-    // accessToken(),
+    accessToken(),
     favoriteDoctorController.createFavoriteDoctor
   );
 
 /* ---------------------------- LIST OF FAVORITE ---------------------------- */
 router.get(
   "/list",
-  // accessToken(),
+  accessToken(),
   favoriteDoctorController.getFavoriteDoctorList
 );
 

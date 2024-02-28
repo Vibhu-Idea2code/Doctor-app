@@ -25,6 +25,7 @@ const allDoctorListById = async (req, res) => {
       .select("rating review doctorid patientid");
 
     res.status(200).json({
+      status:200,
       success: true,
       message: "Doctor details and appointments retrieved successfully!",
       data: {
@@ -34,6 +35,7 @@ const allDoctorListById = async (req, res) => {
     });
   } catch (error) {
     res.status(error?.statusCode || 400).json({
+      status: error.statusCode || 400,
       success: false,
       message:
         error?.message || "Something went wrong, please try again or later!",
@@ -58,6 +60,7 @@ const doctorByIdDetails = async (req, res) => {
     }
 
     res.status(200).json({
+      status: 200,
       success: true,
       message: "Doctor details retrieved successfully!",
       data: appointments.map((appointment) => ({
@@ -68,7 +71,7 @@ const doctorByIdDetails = async (req, res) => {
       })),
     });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    res.status(400).json({status:400, success: false, message: error.message });
   }
 };
 

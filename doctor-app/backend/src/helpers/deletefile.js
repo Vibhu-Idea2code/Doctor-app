@@ -2,15 +2,27 @@ const fs = require("fs");
 
 module.exports = deleteFile = (file) => {
   const basePath = __dirname + "/../public/" + file;
-  console.log(fs.existsSync(basePath));
+  // console.log(fs.existsSync(basePath));
   try {
     if (fs.existsSync(basePath)) {
       fs.unlinkSync(basePath);
-      console.log(`${basePath} deleted successfully.`);
+      res.status(200).json({
+        status: 200,
+        success: true,
+        message: `${basePath} deleted successfully.`,
+      });
     } else {
-      console.log(`${basePath} does not exist.`);
+      res.status(404).json({
+        status: 404,
+        success: false,
+        message: `${basePath} does not exist.`,
+      });
     }
   } catch (error) {
-    console.log(`Error deleting ${basePath}:`, error);
+    res.status(400).json({
+      status: 400,
+      success: false,
+      message: `Error deleting ${basePath}:`,
+    });
   }
 };

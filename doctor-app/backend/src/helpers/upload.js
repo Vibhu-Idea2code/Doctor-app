@@ -75,7 +75,7 @@ function multiDiffFileUpload(basePath, fieldConfigurations) {
 
 /* ------------- Multi images upload related code for multer ... ------------ */
 function multiFileUpload(basePath, allowedMimes, fileSize, name) {
-  console.log(basePath);
+  // console.log(basePath);
 
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {

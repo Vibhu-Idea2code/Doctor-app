@@ -13,6 +13,7 @@ const addNotification = async (req, res, next) => {
     const result = await newNoti.save();
 
     res.status(200).json({
+      status:200,
       message: "Successfully create notification",
       success: true,
       data: result,
@@ -32,12 +33,13 @@ const updateNotification = async (req, res, next) => {
       $set: req.body,
     });
     if (!isUpdate)
-      return res.status(404).json({ message: "No such notification" });
+      return res.status(404).json({ status:404,success: false,message: "No such notification" });
 
     const result = await Notification.findById(req.params.id);
     return res
       .status(200)
       .json({
+        status: 200,
         message: "Successfully update notification",
         success: true,
         data: result,
@@ -53,13 +55,14 @@ const updateNotiStatus = async (req, res, next) => {
     // Convert string is into Object id
     const id = new mongoose.Types.ObjectId(req.params.id);
     const noti = await Notification.findById(id);
-    if (!noti) return res.status(404).json({ message: "No such notification" });
+    if (!noti) return res.status(404).json({status:404,success: false, message: "No such notification" });
 
     noti.status = !noti.status;
     const result = await noti.save();
     return res
       .status(200)
       .json({
+        status: 200,
         message: "Successfully update status notification",
         success: true,
         data: result,
@@ -77,11 +80,11 @@ const deleteNotification = async (req, res, next) => {
     if (!noti)
       return res
         .status(200)
-        .json({ message: "Successfully create notification", success: true });
+        .json({ status:200,message: "Successfully create notification", success: true });
     await Notification.deleteOne({ _id: id });
     return res
       .status(200)
-      .json({ message: "Successfully delete notification", success: true });
+      .json({status:200, message: "Successfully delete notification", success: true });
   } catch (err) {
     next(err);
   }
@@ -91,9 +94,9 @@ const deleteNotification = async (req, res, next) => {
   const getAllNotification = async (req, res) => {
     try {
       const noti = await Notification.find()
-      res.status(200).json({ success: true, data: noti });
+      res.status(200).json({status:200, success: true, data: noti });
     } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
+      res.status(500).json({status:500, success: false, error: error.message });
     }
   };
   

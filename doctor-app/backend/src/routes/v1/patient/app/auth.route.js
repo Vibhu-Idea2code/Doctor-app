@@ -53,42 +53,46 @@ router.post(
 /* ------------------------- UPDATE PATEINT PROFILE ------------------------- */
 router.put(
   "/update-patient-profile",
-  // accessToken(),
+  accessToken(),
   singleFileUpload("/patientImag", "image"),
   updatePatientController.updatepatientProfile
 );
 /* ------------------------- DELETE PATIENT PROFILE ------------------------- */
 router.delete(
   "/delete-patient/:patientId",
-  // accessToken(),
+  accessToken(),
   updatePatientController.deletePatient
 );
 
 /* ----------------------------- All Doctor List Rating Wise Filter ----------------------------- */
 router.get(
   "/docotr-list",
-  // accessToken(),
+  accessToken(),
   homeScreenPatientController.allDoctorList
 );
 
 /* -------------- All Specilaist List At Home Screen Of Patient ------------- */
 router.get(
   "/specialist-list",
-  // accessToken(),
+  accessToken(),
   homeScreenPatientController.allSpecialList
 );
 /* ----------- SEARCH FILTER WITH CITY AND SPECIALIST(SEARCH API) ----------- */
 router.get(
   "/search-specialist-city",
-  // accessToken(),
+  accessToken(),
   homeScreenPatientController.searchDoctorSpecialist
 );
 
 /* ---------------------------- DETAILS OF DOCTOR --------------------------- */
 router.get(
   "/list-doctor-id",
-  // accessToken(),
+  accessToken(),
   doctorDetailController.allDoctorListById
 );
+
+
+router.get("/country-list", accessToken(), updatePatientController.allCountryList);
+
 
 module.exports = router;

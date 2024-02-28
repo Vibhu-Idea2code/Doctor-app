@@ -46,7 +46,7 @@ const register = async (req, res) => {
       fcm_token,
     };
     const data = await doctorService.createDoctor(filter);
-    res.status(200).json({ success: true, data: data });
+    res.status(200).json({ success: true,message:"doctor register succesfully",status:200, data: data });
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
@@ -92,6 +92,9 @@ const login = async (req, res) => {
       token: token,
       refreshToken: refreshToken,
       baseUrl: baseUrl,
+      message:"login successful",
+      status:200,
+      success:true
     });
   } catch (error) {
     res.status(404).json({ error: error.message });
@@ -103,7 +106,7 @@ const forgotPass = async (req, res) => {
   try {
     const { email, name } = req.body;
     const findUser = await doctorService.findDoctorByEmail(email);
-    console.log(findUser);
+    // console.log(findUser);
     if (!findUser) throw Error("User not found");
     const otp = ("0".repeat(4) + Math.floor(Math.random() * 20 ** 5)).slice(-4);
     findUser.otp = otp;
@@ -132,6 +135,7 @@ const forgotPass = async (req, res) => {
       message: "User login successfully!",
       // data: { data },
       data: `user otp is stored ${otp}`,
+      status:200
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -168,7 +172,7 @@ const verifyOtp = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -177,10 +181,11 @@ const resetPassword = async (req, res) => {
   try {
     const { newPassword, confirmPassword, id } = req.body;
 
-    console.log(id);
+    // console.log(id);
 
     if (newPassword !== confirmPassword) {
       return res.status(400).json({
+        status: 400,
         success: false,
         message: "New password and confirm password do not match.",
       });
@@ -189,12 +194,14 @@ const resetPassword = async (req, res) => {
     // Checking if the user is in the database or not
     if (!doctor) {
       return res.status(400).json({
+        status: 400,
         success: false,
         message: "User does not exist!",
       });
     }
 
     res.status(200).json({
+      status: 200,
       success: true,
       message: "Password reset successfully!",
       data: doctor,
@@ -207,26 +214,26 @@ const resetPassword = async (req, res) => {
 const changePassword = async (req, res) => {
   try {
     const { oldpass, newpass, confirmpass, doctorId } = req.body; // assuming patientId is provided in the request body
-    console.log(req.body, "++++++++++++++");
+    // console.log(req.body, "++++++++++++++");
 
     // Find the patient by their ID
     const doctor = await Doctor.findById(doctorId);
-    console.log(doctor, "++++++++++++++++++++++++++++++++");
+    // console.log(doctor, "++++++++++++++++++++++++++++++++");
     if (!doctor) {
-      return res.status(404).json({ error: "doctor not found" });
+      return res.status(404).json({status:404,success:false, error: "doctor not found" });
     }
 
     // Verify the old password
     const isPasswordCorrect = await bcrypt.compare(oldpass, doctor.password);
     if (!isPasswordCorrect) {
-      return res.status(401).json({ error: "Incorrect old password" });
+      return res.status(401).json({ status:401,success:false,error: "Incorrect old password" });
     }
 
     // Check if the new password and confirm password match
     if (newpass !== confirmpass) {
       return res
         .status(400)
-        .json({ error: "New password and confirm password do not match" });
+        .json({status:400,success:false, error: "New password and confirm password do not match" });
     }
 
     // Hash the new password and update it in the database
@@ -236,7 +243,7 @@ const changePassword = async (req, res) => {
 
     return res
       .status(200)
-      .json({ success: true, message: "Password updated successfully" });
+      .json({ success: true,status:200, message: "Password updated successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

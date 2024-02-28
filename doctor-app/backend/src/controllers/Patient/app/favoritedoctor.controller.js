@@ -16,6 +16,7 @@ const createFavoriteDoctor = async (req, res) => {
       // Remove favorite if it already exists
       await FavoriteDoctor.findOneAndDelete({ doctorid: doctorId }); // Corrected field name
       res.status(200).json({
+        status:200,
         message: "Successfully removed doctor from favorites",
         success: true,
         data: existingFavorite,
@@ -26,14 +27,15 @@ const createFavoriteDoctor = async (req, res) => {
       if (!appointment) {
         throw new Error("Failed to create appointment");
       }
-      res.status(200).json({
+      res.status(201).json({
+        status: 201,
         message: "Successfully created a new appointment",
         success: true,
         data: appointment,
       });
     }
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    res.status(400).json({status:400, success: false, message: error.message });
   }
 };
 /* ------------------------------ FAVORITE LIST ----------------------------- */
@@ -87,6 +89,7 @@ const getFavoriteDoctorList = async (req, res) => {
     });
 
     res.status(200).json({
+      status:200,
       success: true,
       data: {
         favoriteDoctors,
@@ -97,6 +100,7 @@ const getFavoriteDoctorList = async (req, res) => {
     });
   } catch (error) {
     res.status(error?.statusCode || 400).json({
+      status: error?.statusCode || 400,
       success: false,
       message:
         error?.message || "Something went wrong, please try again or later!",

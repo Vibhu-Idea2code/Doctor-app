@@ -59,6 +59,7 @@ const allDoctorList = async (req, res) => {
       req.protocol +"://" +req.get("host") +process.env.BASE_URL_PROFILE_PATH;
 
     res.status(200).json({
+      status:200,
       success: true,
       message: "Doctor data fetched successfully",
       doctors: sortedDoctors,
@@ -66,6 +67,7 @@ const allDoctorList = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      status: 500,
       success: false,
       message: error.message,
     });
@@ -83,12 +85,14 @@ const allSpecialList = async (req, res) => {
     }
 
     res.status(200).json({
+      status: 200,
       success: true,
       message: "user data get successfully ",
       user: userData,
     });
   } catch (error) {
     res.status(404).json({
+      status: 404,
       success: false,
       message: error.message,
     });
@@ -103,6 +107,7 @@ const searchDoctorSpecialist = async (req, res) => {
     // Check if query parameter is provided
     if (!query) {
       return res.status(400).json({
+        status: 400,
         success: false,
         message: "Query parameter is missing.",
       });
@@ -129,6 +134,7 @@ const searchDoctorSpecialist = async (req, res) => {
 
     if (combinedResults.length === 0) {
       return res.status(404).json({
+        status: 404,
         success: false,
         message: "No matching doctors or specialists found for the given query.",
       });
@@ -158,13 +164,14 @@ const searchDoctorSpecialist = async (req, res) => {
 
     // If results are found, return a success response with the combined search results
     res.status(200).json({
+      status: 200,
       success: true,
       message: "Search data retrieved successfully.",
       searchResults: populatedDoctors,
     });
   } catch (error) {
-    console.error("Error in searchDoctorSpecialistCity:", error);
-    res.status(500).json({ success: false, error: "Internal Server Error" });
+    // console.error("Error in searchDoctorSpecialistCity:", error);
+    res.status(500).json({status:500, success: false, error: "Internal Server Error" });
   }
 };
 

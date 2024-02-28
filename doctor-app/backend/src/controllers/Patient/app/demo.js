@@ -207,7 +207,7 @@ const searchDoctorSpecialist = async (req, res) => {
       searchResults: combinedResults,
     });
   } catch (error) {
-    console.error("Error in searchDoctorSpecialist:", error);
+    // console.error("Error in searchDoctorSpecialist:", error);
     res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };

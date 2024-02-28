@@ -1,7 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const { patientService } = require("../../../services");
-const { Patient } = require("../../../models");
+const { Patient, Country } = require("../../../models");
 const userHelper = require("../../../helpers/userHelper");
 const deleteFiles = require("../../../helpers/deletefile");
 
@@ -15,12 +15,22 @@ const updatepatientProfile = async (req, res) => {
     if (user && user.image) {
       // Delete the existing image
       const imagePath = path.join(__dirname, "/../../../public/patientImag", user.image);
-      console.log("imagePath:", imagePath); // Debug log
+      // console.log("imagePath:", imagePath); // Debug log
       if (fs.existsSync(imagePath)) {
         fs.unlinkSync(imagePath);
-        console.log("Existing image deleted successfully."); // Debug log
+        res.status(200).json({
+          status: 200,
+          success: true,
+          message: "Existing image deleted successfully.",
+        });
+        
       } else {
-        console.log("Existing image not found at path:", imagePath); // Debug log
+        res.status(404).json({
+          status: 404,
+          success: false,
+          message: `Existing image not found at path: ${imagePath}`,
+        });
+       
       }
     }
     reqbody.image = req.file.filename;
@@ -45,13 +55,14 @@ const updatepatientProfile = async (req, res) => {
       },
       { new: true }
     );
-    res.status(200).json({
+    res.status(201).json({
+      status:201,
       success: true,
       updateData: isUpdate,
       message: "update successfully",
     });
   } catch (err) {
-    res.status(400).json({ success: false, error: err.message });
+    res.status(400).json({status:400, success: false, error: err.message });
   }
 };
 /* -------------------------- DLETE PATIENT PROFILE ------------------------- */
@@ -60,7 +71,7 @@ const deletePatient = async (req, res) => {
     const userData = await Patient.findById(req.params.patientId);
 
     if (!userData) {
-      return res.status(404).json({ message: "User Data not found" });
+      return res.status(404).json({status:404,success:false, message: "User Data not found" });
     }
     const DeletedData = await Patient.findByIdAndDelete(
       req.params.patientId,
@@ -73,18 +84,43 @@ const deletePatient = async (req, res) => {
     deleteFiles("patientImag/" + userData.image);
 
     res.status(200).json({
+      status:200,
       success: true,
       message: "List of User Data successfully ",
       user: DeletedData,
     });
   } catch (error) {
+    res.status(500).json({
+      status:500,
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const allCountryList = async (req, res) => {
+  try {
+    const country = await Country.find();
+
+    if (!country) {
+      return res.status(404).json({ message: "country list ata not found" });
+    }
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Country data get successfully ",
+      country: country,
+    });
+  } catch (error) {
     res.status(404).json({
+      status: 404,
       success: false,
       message: error.message,
     });
   }
 };
 module.exports = {
-  updatepatientProfile,
+  updatepatientProfile,allCountryList,
   deletePatient,
 };

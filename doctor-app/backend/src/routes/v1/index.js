@@ -13,7 +13,9 @@ const notificationRoute = require("./patient/app/notification.route");
 
 const authRoute = require("./doctor/app/auth.route");
 const specialistRoute = require("./doctor/web/specialist.route");
-const faqRoute = require("./doctor/web/faq.route");
+const faqRoute = require("./doctor/app/faq.route");
+const faqPatientRoute = require("./patient/web/faq.route");
+
 const helpRoute = require("./doctor/web/help.route");
 const homeScreenDoctorRoute = require("./doctor/app/homescreen.route");
 
@@ -32,6 +34,8 @@ router.use("/notification", notificationRoute);
 router.use("/doctor", authRoute);
 router.use("/specialist", specialistRoute);
 router.use("/faq", faqRoute);
+router.use("/faq-patient", faqPatientRoute);
+
 router.use("/help", helpRoute);
 router.use("/homescreen", homeScreenDoctorRoute);
 

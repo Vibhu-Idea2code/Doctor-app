@@ -50,12 +50,13 @@ const createAppointment = async (req, res) => {
       throw new Error("No such appointment");
     }
     res.status(200).json({
+      status:200,
       message: "Successfully created a new appointment",
       success: true,
       data: appointment,
     });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    res.status(400).json({status:400, success: false, message: error.message });
   }
 };
 
@@ -65,9 +66,9 @@ const getAppointments = async (req, res) => {
     const appointments = await AppointmentBook.find()
       .populate("patientid")
       .populate("doctorid");
-    res.status(200).json({ success: true, data: appointments });
+    res.status(200).json({status:200, success: true, data: appointments });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({status:500, success: false, error: error.message });
   }
 };
 
@@ -77,9 +78,9 @@ const getAppointmentstatus = async (req, res) => {
     const appointments = await AppointmentBook.find({ appointmentstatus: 0 })
       .populate("patientid")
       .populate("doctorid");
-    res.status(200).json({ success: true, data: appointments });
+    res.status(200).json({status:200, success: true, data: appointments });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({status:500, success: false, error: error.message });
   }
 };
 /* ---------------- LIST COMPLETE OF APPOINTMENT FOR PATIENT --------------- */
@@ -88,9 +89,9 @@ const getAppointmentstatusComplete = async (req, res) => {
     const appointments = await AppointmentBook.find({ appointmentstatus: 2 })
       .populate("patientid")
       .populate("doctorid");
-    res.status(200).json({ success: true, data: appointments });
+    res.status(200).json({status:200, success: true, data: appointments });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({status:500, success: false, error: error.message });
   }
 };
 /* ---------------- LIST RUNNING OF APPOINTMENT FOR PATIENT AND DOCTOR(EXTRA) --------------- */
@@ -99,9 +100,9 @@ const getAppointmentstatusVideoChatSms = async (req, res) => {
     const appointments = await AppointmentBook.find({ appointmentstatus: 1 })
       .populate("patientid")
       .populate("doctorid");
-    res.status(200).json({ success: true, data: appointments });
+    res.status(200).json({status:200, success: true, data: appointments });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({ status:200,success: false, error: error.message });
   }
 };
 
@@ -112,13 +113,13 @@ const getAppointmentById = async (req, res) => {
     if (!appointment) {
       return res
         .status(404)
-        .json({ success: false, error: "Appointment not found" });
+        .json({ status:404, success: false, error: "Appointment not found" });
     }
-    res.status(200).json({ success: true, data: appointment });
+    res.status(200).json({status:200, success: true, data: appointment });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({status:500, success: false, error: error.message });
   }
-  K;
+  
 };
 
 /* --------------------- UPDATE REVIEW RATING BY PATIENT -------------------- */
@@ -132,7 +133,7 @@ const updateAppointment = async (req, res) => {
     if (!appointment) {
       return res
         .status(404)
-        .json({ success: false, error: "Appointment not found" });
+        .json({status:404, success: false, error: "Appointment not found" });
     }
     res.status(200).json({
       success: true,
@@ -141,7 +142,7 @@ const updateAppointment = async (req, res) => {
       data: appointment,
     });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({status:500, success: false, error: error.message });
   }
 };
 /* --------------------- UPDATE RESCHEDULE BY PATIENT -------------------- */
@@ -155,7 +156,7 @@ const updateRescheduleAppointment = async (req, res) => {
     if (!appointment) {
       return res
         .status(404)
-        .json({ success: false, error: "Appointment not found" });
+        .json({ status:404,success: false, error: "Appointment not found" });
     }
     res.status(200).json({
       success: true,
@@ -164,7 +165,7 @@ const updateRescheduleAppointment = async (req, res) => {
       data: appointment,
     });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.status(500).json({status:500, success: false, error: error.message });
   }
 };
 

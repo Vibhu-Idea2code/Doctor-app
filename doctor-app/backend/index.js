@@ -39,16 +39,16 @@ app.use(express.static(path.resolve(__dirname, `./src/public`)));
 //   });
 
 io.on('connection', (socket) => {
-  console.log('A user connected');
+  // console.log('A user connected');
 
   // Handle disconnection
   socket.on('disconnect', () => {
-    console.log('User disconnected');
+    // console.log('User disconnected');
   });
 
   // Handle notification event
   socket.on('sendNotification', (data) => {
-    console.log('Notification received:', data);
+    // console.log('Notification received:', data);
     // Broadcast the notification to all connected clients
     io.emit('receiveNotification', data);
   });

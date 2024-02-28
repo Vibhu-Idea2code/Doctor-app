@@ -8,41 +8,41 @@ const { appointmentController } = require("../../../../controllers");
 
 /* --------------------------- CREATE APPOINTMENT --------------------------- */
 router.post("/add-appointment",
-// accessToken(),
+accessToken(),
  appointmentController.createAppointment);
 
  /* ------------------------EXTRA GET ALL APPOINTMENT LIST ------------------------ */
 router.get("/list",
-// accessToken(), 
+accessToken(), 
 appointmentController.getAppointments);
 
 /* ---------------- LIST UPCOMMINT OF APPOINTMENT FOR PATIENT --------------- */
 router.get("/list-upcomming", 
-// accessToken(),
+accessToken(),
 appointmentController.getAppointmentstatus);
 /* ---------------- LIST COMPLETE OF APPOINTMENT FOR PATIENT --------------- */
 router.get("/list-completed", 
-// accessToken(),
+accessToken(),
 appointmentController.getAppointmentstatusComplete);
 
 /* ---------------- LIST RUNNING OF APPOINTMENT FOR PATIENT AND DOCTOR(EXTRA) --------------- */
 router.get("/list-video-sms-voice",
-// accessToken(), 
+accessToken(), 
 appointmentController.getAppointmentstatusVideoChatSms);
 
 /* ------------------ LIST DOCTOR ID ONLY APPOINTMENT EXTRA ----------------- */
 router.get("/list-doctor-id", 
-// accessToken(),
+accessToken(),
 appointmentController.getAppointmentById);
 
 /* --------------------- UPDATE REVIEW RATING BY PATIENT -------------------- */
 router.put("/update-review-rating",
-// accessToken(),
+accessToken(),
  appointmentController.updateAppointment);
  /* --------------------- UPDATE RESCHEDULE BY PATIENT -------------------- */
 router.put(
   "/update-reschedule-appointment",
-  // accessToken(),
+  accessToken(),
   appointmentController.updateAppointment
 );
 

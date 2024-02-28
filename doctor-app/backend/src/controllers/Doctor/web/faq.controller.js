@@ -6,26 +6,27 @@ const createFaq = async (req, res) => {
     const reqBody = req.body;
 
     // Ensure only one of doctorId or patientId is provided
-    if ((reqBody.doctorId && reqBody.patientId) || (!reqBody.doctorId && !reqBody.patientId)) {
+    if (!reqBody.doctorId) {
       throw new Error("Either doctorId or patientId must be provided, but not both or neither");
     }
 
     // Determine the ID type and set status accordingly
-    let status;
-    if (reqBody.doctorId) {
-      status = 0; // Assuming doctorId is present
-    } else if (reqBody.patientId) {
-      status = 1; // Assuming patientId is present
-    }
+    // let status;
+    // if (reqBody.doctorId) {
+    //   status = 0; // Assuming doctorId is present
+    // } else if (reqBody.patientId) {
+    //   status = 1; // Assuming patientId is present
+    // }
 
-    // Add the status to the request body
-    reqBody.status = status;
+    // // Add the status to the request body
+    // reqBody.status = status;
 
     const faq = await Faq.create(reqBody);
     if (!faq) {
       throw new Error("Failed to create faq");
     }
     res.status(200).json({
+      status:200,
       message: "Successfully created a new faq",
       success: true,
       data: faq,
@@ -42,12 +43,14 @@ const getFaqList = async (req, res) => {
       throw new Error("faq list data not found ...! ");
     }
     res.status(200).json({
+      status: 200,
       success: true,
       message: "Get faq list successfully ...! ",
       data: faq,
     });
   } catch (error) {
     res.status(400).json({
+      status: 400,
       success: false,
       message: error.message,
     });

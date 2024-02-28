@@ -1,7 +1,19 @@
-const express = require("express");
-const { faqDoctorController } = require("../../../../controllers");
-const router = express.Router();
+const express=require('express');
+const {  faqPatientController} = require('../../../../controllers');
 
-router.post("/create-help-doctor", faqDoctorController.createHelp);
+const {    accessToken} = require("../../../../middleware/patientAuth");
 
-module.exports = router;
+
+const router=express.Router();
+
+// NOTE:- status:- false then doctorid and true then patientid
+
+
+
+router.post("/create-faq-patient", faqPatientController.createFaq);
+router.get('/list-faq-patient',
+accessToken(),
+faqPatientController.getFaqList);
+
+module.exports=router;
+

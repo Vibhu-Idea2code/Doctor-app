@@ -5,6 +5,8 @@ module.exports.Country = require("./country.model");
 module.exports.Patient = require("./patient.model");
 module.exports.AppointmentBook = require("./appointmentbook.model");
 module.exports.Faq = require("./faq.model");
+module.exports.FaqPatient = require("./faq.patient.model");
+
 module.exports.FavoriteDoctor = require("./favoritedoctor.model");
 module.exports.Help = require("./help.model");
 module.exports.helpDoctor = require("./helpDoctor");
