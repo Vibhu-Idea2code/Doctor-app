@@ -4,50 +4,107 @@ const jwt = require("jsonwebtoken");
 const jwtSecrectKey = "cdccsvavsvfssbtybnjnuki";
 // const otpGenerator = require("otp-generator");
 const { patientService,emailService } = require("../../../services");
-const { Doctor, Patient } = require("../../../models");
+const { patient, Patient } = require("../../../models");
 const ejs = require("ejs");
 const path = require("path");
 
 /* -------------------------- REGISTER/CREATE PATIENT -------------------------- */
 const register = async (req, res) => {
-  // const { email, password, role } = req.body;
   try {
-    const { email, password, name, confirmPassword, phoneNumber } =
-      req.body;
-     
-    const reqBody = req.body;
-    const existingUser = await patientService.findPatientByEmail(reqBody.email);
+    const { email, password, name, confirmPassword, phoneNumber } = req.body;
+    
+    // Validate email format
+    if (!isValidEmail(email)) {
+      throw new Error("Invalid email format.");
+    }
+    
+    // Validate password strength
+    if (!isValidPassword(password)) {
+      throw new Error("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
+    }
+    
+    // Validate name length
+    if (!isValidNameLength(name)) {
+      throw new Error("Name must be between 2 and 50 characters long.");
+    }
+    
+    // Validate phone number format
+    if (!isValidPhoneNumber(phoneNumber)) {
+      throw new Error("Invalid phone number format.");
+    }
+    
+    const existingUser = await patientService.findPatientByEmail(email);
     if (existingUser) {
       throw new Error("User with this email already exists.");
     }
-    const hashPassword = await bcrypt.hash(password, 8);
+    
     if (password !== confirmPassword) {
       return res.status(400).json({
-        status:400,
+        status: 400,
         success: false,
         message: "New password and confirm password do not match.",
       });
     }
+
+    const hashPassword = await bcrypt.hash(password, 8);
+    
     let option = {
       email,
       exp: moment().add(1, "days").unix(),
     };
 
     const token = await jwt.sign(option, jwtSecrectKey);
+    
+    // Generating refresh token
+    const refreshToken = await jwt.sign(
+      { email: email },
+      process.env.JWT_REFRESH_SECRET_KEY,
+      { expiresIn: '7d' }
+    );
 
     const filter = {
       email,
       name,
       password: hashPassword,
       token,
+      refreshToken, // Include refresh token in the registration
       phoneNumber,
     };
+    
     const data = await patientService.createPatient(filter);
-    res.status(200).json({status:200, success: true, data: data });
+    res.status(200).json({status: 200, success: true, data: data });
   } catch (err) {
-    res.status(500).json({ status:500,sucess: false, error: err.message });
+    res.status(500).json({ status: 500, success: false, error: err.message });
   }
 };
+
+
+// Validate email format
+function isValidEmail(email) {
+  // Basic email format validation using regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+// Validate password strength
+function isValidPassword(password) {
+  // Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character
+  const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{"':;?/>.<,]).{8,}$/;
+  return passwordRegex.test(password);
+}
+
+// Validate name length
+function isValidNameLength(name) {
+  // Name must be between 2 and 50 characters long
+  return name.length >= 2 && name.length <= 50;
+}
+
+// Validate phone number format
+function isValidPhoneNumber(phoneNumber) {
+  // Simple phone number format validation using regex
+  const phoneRegex = /^\d{10}$/; // Assumes a 10-digit phone number format
+  return phoneRegex.test(phoneNumber);
+}
 
 /* -------------------------- LOGIN/SIGNIN USER  0-new 1-already -------------------------- */
 const login = async (req, res) => {
@@ -115,7 +172,7 @@ const forgotPass = async (req, res) => {
         if (err) {
           let userCreated = await patientService.findPatientByEmail(email);
           if (userCreated) {
-            // await  Doctor.findOne({email});
+            // await  patient.findOne({email});
           }
           // throw new Error("Something went wrong, please try again.");
         } else {
@@ -139,19 +196,19 @@ const verifyOtp = async (req, res) => {
   try {
     const { otp, email } = req.body;
 
-    const doctor = await Patient.findOne({ email });
+    const patient = await Patient.findOne({ email });
 
     // Check if user exists
-    if (!doctor) {
+    if (!patient) {
       return res.status(404).json({
         status: 404,
         success: false,
-        message: "Doctor not found",
+        message: "patient not found",
       });
     }
 
     // Compare OTP
-    if (doctor.otp === otp) {
+    if (patient.otp === otp) {
       return res.status(200).json({
         status: 200,
         success: true,

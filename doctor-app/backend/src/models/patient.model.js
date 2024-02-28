@@ -3,10 +3,10 @@ const mongoose = require("mongoose");
 const patientSchema = new mongoose.Schema(
   {
     name: { type: String ,trim:true},
-    email: { type: String },
+    email: { type: String, trim: true, lowercase: true, },
     password: { type: String },
     token: { type: String },
-    phoneNumber: { type: Number },
+    phoneNumber: { type: Number ,},
     refreshToken: { type: String },
     otp: { type: String, default: null },
     otpExpiry: { type: String },

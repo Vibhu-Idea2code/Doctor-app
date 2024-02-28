@@ -12,50 +12,115 @@ const path = require("path");
 /* ---------------------- NOTE :ALL DETAIL ABOUT ONLY DOCTOR --------------------- */
 /* -------------------------- REGISTER/CREATE DOCTOR -------------------------- */
 const register = async (req, res) => {
-  // const { email, password, role } = req.body;
   try {
-    const { email, password, name, phoneNumber, confirmPassword, city,fcm_token } =
-      req.body;
-    const reqBody = req.body;
-    const existingUser = await doctorService.findDoctorByEmail(reqBody.email);
-    if (existingUser) {
-      throw new Error("User with this email already exists.");
+    const {
+      email,
+      password,
+      name,
+      phoneNumber,
+      confirmPassword,
+      city,
+      fcm_token,
+    } = req.body;
+
+    // Check if required fields are missing
+    if (
+      !email ||
+      !password ||
+      !name ||
+      !phoneNumber ||
+      !confirmPassword ||
+      !city
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields.",
+      });
     }
-    const hashPassword = await bcrypt.hash(password, 8);
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email format.",
+      });
+    }
+
+    // Validate password strength
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.",
+      });
+    }
+
+    // Check if passwords match
     if (password !== confirmPassword) {
       return res.status(400).json({
         success: false,
         message: "New password and confirm password do not match.",
       });
     }
+
+    // Check if user with the same email already exists
+    const existingUser = await doctorService.findDoctorByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User with this email already exists.",
+      });
+    }
+
+    // Hash password
+    const hashPassword = await bcrypt.hash(password, 8);
+
+    // JWT token creation
     let option = {
       email,
-
       exp: moment().add(1, "days").unix(),
     };
-
     const token = await jwt.sign(option, process.env.JWT_SECRET_KEY);
 
+    // Generate refresh token
+    const refreshToken = await jwt.sign(option, process.env.JWT_REFRESH_SECRET_KEY);
+
+    // Prepare data for creating doctor
     const filter = {
       email,
       name,
       phoneNumber,
       password: hashPassword,
       token,
+      refreshToken, // Include refresh token in the data
       city,
       fcm_token,
     };
+
+    // Create doctor
     const data = await doctorService.createDoctor(filter);
-    res.status(200).json({ success: true,message:"doctor register succesfully",status:200, data: data });
+
+    // Respond with success message
+    res.status(200).json({
+      success: true,
+      message: "Doctor registered successfully",
+      status: 200,
+      data: data,
+      refreshToken: refreshToken, // Include refresh token in the response
+    });
   } catch (err) {
-    res.status(500).json({ err: err.message });
+    // Handle errors
+    res.status(500).json({ error: err.message });
   }
 };
+
 
 /* -------------------------- LOGIN/SIGNIN DOCTOR  0-new 1-already -------------------------- */
 const login = async (req, res) => {
   try {
-    const { email, password,fcm_token } = req.body; // Assuming "identifier" can be either email or name
+    const { email, password, fcm_token } = req.body; // Assuming "identifier" can be either email or name
     // const doctor = await Doctor.findOne({
     //   $or: [{ email: identifier }, { name: identifier }],
     // });
@@ -92,9 +157,9 @@ const login = async (req, res) => {
       token: token,
       refreshToken: refreshToken,
       baseUrl: baseUrl,
-      message:"login successful",
-      status:200,
-      success:true
+      message: "login successful",
+      status: 200,
+      success: true,
     });
   } catch (error) {
     res.status(404).json({ error: error.message });
@@ -135,7 +200,7 @@ const forgotPass = async (req, res) => {
       message: "User login successfully!",
       // data: { data },
       data: `user otp is stored ${otp}`,
-      status:200
+      status: 200,
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -144,9 +209,9 @@ const forgotPass = async (req, res) => {
 /* ------------------------------- VERIFY OTP ------------------------------- */
 const verifyOtp = async (req, res) => {
   try {
-    const { otp, phoneNumber } = req.body;
+    const { otp, email } = req.body;
 
-    const doctor = await Doctor.findOne(phoneNumber);
+    const doctor = await Doctor.findOne({ email });
 
     // Check if user exists
     if (!doctor) {
@@ -158,7 +223,7 @@ const verifyOtp = async (req, res) => {
     }
 
     // Compare OTP
-    if (doctor.otp !== otp) {
+    if (doctor.otp === otp) {
       return res.status(200).json({
         status: 200,
         success: true,
@@ -220,20 +285,26 @@ const changePassword = async (req, res) => {
     const doctor = await Doctor.findById(doctorId);
     // console.log(doctor, "++++++++++++++++++++++++++++++++");
     if (!doctor) {
-      return res.status(404).json({status:404,success:false, error: "doctor not found" });
+      return res
+        .status(404)
+        .json({ status: 404, success: false, error: "doctor not found" });
     }
 
     // Verify the old password
     const isPasswordCorrect = await bcrypt.compare(oldpass, doctor.password);
     if (!isPasswordCorrect) {
-      return res.status(401).json({ status:401,success:false,error: "Incorrect old password" });
+      return res
+        .status(401)
+        .json({ status: 401, success: false, error: "Incorrect old password" });
     }
 
     // Check if the new password and confirm password match
     if (newpass !== confirmpass) {
-      return res
-        .status(400)
-        .json({status:400,success:false, error: "New password and confirm password do not match" });
+      return res.status(400).json({
+        status: 400,
+        success: false,
+        error: "New password and confirm password do not match",
+      });
     }
 
     // Hash the new password and update it in the database
@@ -241,9 +312,11 @@ const changePassword = async (req, res) => {
     doctor.password = hashedPassword;
     await doctor.save();
 
-    return res
-      .status(200)
-      .json({ success: true,status:200, message: "Password updated successfully" });
+    return res.status(200).json({
+      success: true,
+      status: 200,
+      message: "Password updated successfully",
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

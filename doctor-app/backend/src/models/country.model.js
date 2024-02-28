@@ -6,6 +6,7 @@ const countrySchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     countryflag: { type: String },  
+    countrycode:{type:String},
     status:{type: Boolean,default: true},
 
   },
