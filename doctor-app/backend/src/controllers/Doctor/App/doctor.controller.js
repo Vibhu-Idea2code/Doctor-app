@@ -34,7 +34,7 @@ const updateDocProfile = async (req, res) => {
     const user = await Doctor.findById(reqbody.doctorId);
 
     if (!user) {
-      throw new Error(`User with doctorId ${reqbody.doctorId} not found`);
+      throw new Error(` doctorId ${reqbody.doctorId} not found`);
     }
     // Concatenate first name and last name
     const fullName = reqbody.first_name + " " + reqbody.last_name;
@@ -52,7 +52,7 @@ const updateDocProfile = async (req, res) => {
       status: 200,
       success: true,
       updateData: isUpdate,
-      message: "update successfully",
+      message: "update profile successfully",
     });
   } catch (err) {
     res.status(400).json({ success: false, error: err.message });
@@ -75,7 +75,7 @@ const deleteDoctor = async (req, res) => {
     res.status(200).json({
       status: 200,
       success: true,
-      message: "List of User Data successfully ",
+      message: "List of Doctor Data successfully ",
       user: DeletedData,
     });
 

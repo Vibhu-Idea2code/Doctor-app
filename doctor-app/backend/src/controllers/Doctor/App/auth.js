@@ -21,6 +21,10 @@ const register = async (req, res) => {
       confirmPassword,
       city,
       fcm_token,
+      bankname,
+      holdername,
+      accountnumber,
+      ifsccode,
     } = req.body;
 
     // Check if required fields are missing
@@ -30,11 +34,15 @@ const register = async (req, res) => {
       !name ||
       !phoneNumber ||
       !confirmPassword ||
-      !city
+      !city ||
+      !bankname ||
+      !holdername ||
+      !accountnumber ||
+      !ifsccode
     ) {
       return res.status(400).json({
         success: false,
-        message: "Missing required fields.",
+        message: "Missing Required Fields.",
       });
     }
 
@@ -43,7 +51,7 @@ const register = async (req, res) => {
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid email format.",
+        message: "Invalid Email Format.",
       });
     }
 
@@ -53,7 +61,7 @@ const register = async (req, res) => {
       return res.status(400).json({
         success: false,
         message:
-          "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.",
+          "Password Must Be At Least 8 Characters Long and Contain At Least One Uppercase Letter, One Lowercase Letter, And One Number.",
       });
     }
 
@@ -61,7 +69,7 @@ const register = async (req, res) => {
     if (password !== confirmPassword) {
       return res.status(400).json({
         success: false,
-        message: "New password and confirm password do not match.",
+        message: "New Password And Confirm Password Do Not Match.",
       });
     }
 
@@ -70,7 +78,7 @@ const register = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "User with this email already exists.",
+        message: "Doctor With This Email Already Exists.",
       });
     }
 
@@ -85,7 +93,10 @@ const register = async (req, res) => {
     const token = await jwt.sign(option, process.env.JWT_SECRET_KEY);
 
     // Generate refresh token
-    const refreshToken = await jwt.sign(option, process.env.JWT_REFRESH_SECRET_KEY);
+    const refreshToken = await jwt.sign(
+      option,
+      process.env.JWT_REFRESH_SECRET_KEY
+    );
 
     // Prepare data for creating doctor
     const filter = {
@@ -97,6 +108,10 @@ const register = async (req, res) => {
       refreshToken, // Include refresh token in the data
       city,
       fcm_token,
+      ifsccode,
+      accountnumber,
+      holdername,
+      bankname,
     };
 
     // Create doctor
@@ -105,9 +120,10 @@ const register = async (req, res) => {
     // Respond with success message
     res.status(200).json({
       success: true,
-      message: "Doctor registered successfully",
+      message: "Doctor Registered Successfully",
       status: 200,
       data: data,
+      doctorId: data._id,
       refreshToken: refreshToken, // Include refresh token in the response
     });
   } catch (err) {
@@ -115,7 +131,6 @@ const register = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
 
 /* -------------------------- LOGIN/SIGNIN DOCTOR  0-new 1-already -------------------------- */
 const login = async (req, res) => {
@@ -125,10 +140,10 @@ const login = async (req, res) => {
     //   $or: [{ email: identifier }, { name: identifier }],
     // });
     const doctor = await Doctor.findOne({ email });
-    if (!doctor) throw Error("User not found");
+    if (!doctor) throw Error("Doctor Not Found");
 
     const successPassword = await bcrypt.compare(password, doctor.password);
-    if (!successPassword) throw Error("Incorrect password");
+    if (!successPassword) throw Error("Incorrect Password");
 
     const payload = {
       _id: doctor._id,
@@ -157,7 +172,8 @@ const login = async (req, res) => {
       token: token,
       refreshToken: refreshToken,
       baseUrl: baseUrl,
-      message: "login successful",
+      message: "Login Successful",
+      doctorId: output._id,
       status: 200,
       success: true,
     });
@@ -170,12 +186,12 @@ const login = async (req, res) => {
 const forgotPass = async (req, res) => {
   try {
     const { email, name } = req.body;
-    const findUser = await doctorService.findDoctorByEmail(email);
-    // console.log(findUser);
-    if (!findUser) throw Error("User not found");
+    const findDoctor = await doctorService.findDoctorByEmail(email);
+    // console.log(findDoctor);
+    if (!findDoctor) throw Error("Doctor Not Found");
     const otp = ("0".repeat(4) + Math.floor(Math.random() * 20 ** 5)).slice(-4);
-    findUser.otp = otp;
-    await findUser.save();
+    findDoctor.otp = otp;
+    await findDoctor.save();
     ejs.renderFile(
       path.join(__dirname, "../../../views/otp-template.ejs"),
       {
@@ -197,9 +213,11 @@ const forgotPass = async (req, res) => {
     );
     res.status(200).json({
       success: true,
-      message: "User login successfully!",
+      message: "Doctor Login Successfully!",
       // data: { data },
-      data: `user otp is stored ${otp}`,
+      data: `Doctor Otp Is Stored ${otp}`,
+      findDoctor,
+      doctorId: findDoctor._id,
       status: 200,
     });
   } catch (error) {
@@ -218,7 +236,7 @@ const verifyOtp = async (req, res) => {
       return res.status(404).json({
         status: 404,
         success: false,
-        message: "Doctor not found",
+        message: "Doctor Not Found",
       });
     }
 
@@ -227,7 +245,7 @@ const verifyOtp = async (req, res) => {
       return res.status(200).json({
         status: 200,
         success: true,
-        message: "OTP verification successful",
+        message: "OTP Verification Successful",
       });
     } else {
       return res.status(400).json({
@@ -244,7 +262,7 @@ const verifyOtp = async (req, res) => {
 /* ----------------------------- RESET PASSWORD ----------------------------- */
 const resetPassword = async (req, res) => {
   try {
-    const { newPassword, confirmPassword, id } = req.body;
+    const { newPassword, confirmPassword, doctorId } = req.body;
 
     // console.log(id);
 
@@ -252,24 +270,25 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({
         status: 400,
         success: false,
-        message: "New password and confirm password do not match.",
+        message: "New Password And Confirm Password Do Not Match.",
       });
     }
-    let doctor = await Doctor.findById(id);
+    let doctor = await Doctor.findById(doctorId);
     // Checking if the user is in the database or not
     if (!doctor) {
       return res.status(400).json({
         status: 400,
         success: false,
-        message: "User does not exist!",
+        message: "Doctor Does Not Exist!",
       });
     }
 
     res.status(200).json({
       status: 200,
       success: true,
-      message: "Password reset successfully!",
+      message: "Password Reset Successfully!",
       data: doctor,
+      doctorId:doctor._id,
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -287,7 +306,7 @@ const changePassword = async (req, res) => {
     if (!doctor) {
       return res
         .status(404)
-        .json({ status: 404, success: false, error: "doctor not found" });
+        .json({ status: 404, success: false, error: "Doctor not found" });
     }
 
     // Verify the old password
@@ -316,9 +335,72 @@ const changePassword = async (req, res) => {
       success: true,
       status: 200,
       message: "Password updated successfully",
+      doctorId:doctor._id,
+      doctor,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+const socialLogin = async (req, res) => {
+  try {
+    const { email, name, fcm_token } = req.body;
+
+    // Check if required fields are missing
+    if (!email || !name) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields.",
+      });
+    }
+
+    // Check if user with the same email already exists
+    let existingUser = await doctorService.findDoctorByEmail(email);
+
+    // Prepare data for updating or creating doctor
+    const filter = {
+      email,
+      name,
+      fcm_token,
+    };
+
+    let statussocial; // Variable to hold statussocial value
+
+    if (existingUser) {
+      // Update existing user's fcm_token and token
+      filter.token = await jwt.sign({ email }, process.env.JWT_SECRET_KEY);
+      filter.refreshToken = await jwt.sign(
+        { email },
+        process.env.JWT_REFRESH_SECRET_KEY
+      );
+      existingUser = await Doctor.findOne({ email });
+      statussocial = 0; // Existing user
+    } else {
+      // Create new user
+      filter.token = await jwt.sign({ email }, process.env.JWT_SECRET_KEY);
+      filter.refreshToken = await jwt.sign(
+        { email },
+        process.env.JWT_REFRESH_SECRET_KEY
+      );
+      existingUser = await doctorService.createDoctor(filter);
+      statussocial = 1; // New user
+    }
+
+    // Respond with success message
+    res.status(200).json({
+      success: true,
+      message: existingUser
+        ? "Doctor's details updated successfully"
+        : "New doctor created successfully",
+      status: 200,
+      data: existingUser,
+      refreshToken: filter.refreshToken, // Include refresh token in the response
+      statussocial: statussocial, // Include statussocial in the response
+    });
+  } catch (err) {
+    // Handle errors
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -329,4 +411,5 @@ module.exports = {
   login,
   resetPassword,
   changePassword,
+  socialLogin,
 };

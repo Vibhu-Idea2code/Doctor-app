@@ -81,13 +81,13 @@ const allSpecialList = async (req, res) => {
     const userData = await Specialist.find();
 
     if (!userData) {
-      return res.status(404).json({ message: "User list ata not found" });
+      return res.status(404).json({ message: "Specialist list data not found" });
     }
 
     res.status(200).json({
       status: 200,
       success: true,
-      message: "user data get successfully ",
+      message: "Specialist data get successfully ",
       user: userData,
     });
   } catch (error) {

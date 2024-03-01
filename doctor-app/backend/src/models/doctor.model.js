@@ -24,11 +24,16 @@ const doctorSchema = new mongoose.Schema(
     specialist: { type: mongoose.Schema.Types.ObjectId, ref: "specialist" },
     city: { type: String },
     rating: { type: mongoose.Schema.Types.ObjectId, ref: "appointmentbook" },
-  completeappointment:{type:Boolean, default:"0"},
-  fcm_token: {
-    type: String,
-    default: "",
-  },
+    completeappointment: { type: Boolean, default: "0" },
+    bankname: { type: String, default: "" },
+    holdername: { type: String, default: "" },
+    accountnumber: { type: String,default:"" },
+    ifsccode: { type: String ,default:""},
+    // 0-already 1-new
+    fcm_token: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,

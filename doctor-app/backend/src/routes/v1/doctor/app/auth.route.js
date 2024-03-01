@@ -11,16 +11,16 @@ const { singleFileUpload } = require("../../../../helpers/upload");
 router.post("/create-doctor", authController.register);
 
 /* -------------------------- LOGIN DOCTOR ----------- */
-router.post("/login", authController.login);
+router.post("/login", accessToken(), authController.login);
 
 /* -------------------------- FORGOT PASSWORD DOCTOR ----------- */
-router.post("/forgotpass", authController.forgotPass);
+router.post("/forgot-pass", authController.forgotPass);
 
 /* -------------------------- VERIFY OTP DOCTOR ----------- */
 router.post("/verify-otp", authController.verifyOtp);
 
 /* -------------------------- RESET PASSWORD DOCTOR ----------- */
-router.put("/resetPassword", authController.resetPassword);
+router.put("/reset-password", authController.resetPassword);
 
 /* -------------------------- CHANGE PASSWORD DOCTOR ----------- */
 router.post("/change-password", accessToken(), authController.changePassword);
@@ -39,6 +39,10 @@ router.delete(
   accessToken(),
   doctorController.deleteDoctor
 );
+
+router.post("/social-login", 
+// accessToken(),
+ authController.socialLogin);
 
 router.get("/country-list", accessToken(), doctorController.allCountryList);
 

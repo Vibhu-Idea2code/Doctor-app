@@ -29,7 +29,7 @@ const createFavoriteDoctor = async (req, res) => {
       }
       res.status(201).json({
         status: 201,
-        message: "Successfully created a new appointment",
+        message: "Created a new appointment successfully",
         success: true,
         data: appointment,
       });

@@ -27,7 +27,7 @@ const createFaq = async (req, res) => {
       }
       res.status(200).json({
         status:200,
-        message: "Successfully created a new faq",
+        message: "Created a new faq successfully",
         success: true,
         data: faq,
       });
@@ -74,7 +74,7 @@ const getFaqList = async (req, res) => {
   try {
     const faq = await FaqPatient.find().populate("patientId")
     if (!faq) {
-      throw new Error("faq list data not found ...! ");
+      throw new Error("Faq list data not found ...! ");
     }
     res.status(200).json({
       status: 200,

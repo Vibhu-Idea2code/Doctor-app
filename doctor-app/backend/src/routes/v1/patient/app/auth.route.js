@@ -16,37 +16,34 @@ const { singleFileUpload } = require("../../../../helpers/upload");
 /* -------------------------- REGISTER/CREATE PATIENT -------------------------- */
 router.post(
   "/create-patient",
-  // accessToken(),
   authPatientController.register
 );
 /* -------------------------- LOGIN/SIGNIN USER  0-new 1-already -------------------------- */
 router.post(
   "/login",
-  // accessToken(),
+  accessToken(),
   authPatientController.login
 );
 /* --------------------- FORGOT PASSWORD SEND WITH EMAIL -------------------- */
 router.post(
-  "/forgotpass",
-  // accessToken(),
+  "/forgot-pass",
+
   authPatientController.forgotPass
 );
 /* ----------------------- VERIFICATION OTP WITH EMAIL ---------------------- */
 router.post(
   "/verify-otp",
-  //  accessToken(),
   authPatientController.verifyOtp
 );
 /* ----------------------------- reset password ----------------------------- */
 router.put(
-  "/resetPassword",
-  //  accessToken(),
+  "/reset-password",
   authPatientController.resetPassword
 );
 /* ----------------------------- CHANGE PASSWORD ---------------------------- */
 router.post(
   "/change-password",
-  //  accessToken(),
+   accessToken(),
   authPatientController.changePassword
 );
 
@@ -91,8 +88,16 @@ router.get(
   doctorDetailController.allDoctorListById
 );
 
+router.get(
+  "/country-list",
+  accessToken(),
+  updatePatientController.allCountryList
+);
 
-router.get("/country-list", accessToken(), updatePatientController.allCountryList);
-
+router.post(
+  "/social-login",
+  accessToken(),
+  authPatientController.socialLogin
+);
 
 module.exports = router;

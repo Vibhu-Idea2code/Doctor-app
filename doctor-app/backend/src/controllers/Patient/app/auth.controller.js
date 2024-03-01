@@ -35,7 +35,7 @@ const register = async (req, res) => {
     
     const existingUser = await patientService.findPatientByEmail(email);
     if (existingUser) {
-      throw new Error("User with this email already exists.");
+      throw new Error("Patient with this email already exists.");
     }
     
     if (password !== confirmPassword) {
@@ -72,7 +72,8 @@ const register = async (req, res) => {
     };
     
     const data = await patientService.createPatient(filter);
-    res.status(200).json({status: 200, success: true, data: data });
+
+    res.status(200).json({status: 200, success: true, data: data,patientId:data._id,message:"Register patient successfully" });
   } catch (err) {
     res.status(500).json({ status: 500, success: false, error: err.message });
   }
@@ -111,7 +112,7 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body; // Assuming "identifier" can be either email or name
     const patient = await Patient.findOne({ email });
-    if (!patient) throw Error("User not found");
+    if (!patient) throw Error("Patient not found");
 
     const successPassword = await bcrypt.compare(password, patient.password);
     if (!successPassword) throw Error("Incorrect password");
@@ -122,7 +123,7 @@ const login = async (req, res) => {
     };
 
     const token = await jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-      expiresIn: "1m",
+      expiresIn: "2h",
     });
 
     patient.token = token;
@@ -140,8 +141,9 @@ const login = async (req, res) => {
     res.status(200).json({
       status: 200,
       success: true,
-      message:"create patient successfully",
+      message:"Login successfully",
       data: output,
+      patientId:output._id,
       token: token,
       refreshToken: refreshToken,
       baseUrl: baseUrl,
@@ -155,12 +157,12 @@ const login = async (req, res) => {
 const forgotPass = async (req, res) => {
   try {
     const { email, name } = req.body;
-    const findUser = await patientService.findPatientByEmail(email);
-    // console.log(findUser);
-    if (!findUser) throw Error("User not found");
+    const findpatient = await patientService.findPatientByEmail(email);
+    // console.log(findpatient);
+    if (!findpatient) throw Error("Patient not found");
     const otp = ("0".repeat(4) + Math.floor(Math.random() * 10 ** 4)).slice(-4);
-    findUser.otp = otp;
-    await findUser.save();
+    findpatient.otp = otp;
+    await findpatient.save();
     ejs.renderFile(
       path.join(__dirname, "../../../views/otp-template.ejs"),
       { 
@@ -183,9 +185,12 @@ const forgotPass = async (req, res) => {
     res.status(200).json({
       status: 200,
       success: true,
-      message: "User login successfully!",
+      message: "Patient login successfully!",
       // data: { data },
       data: `user otp is stored ${otp}`,
+      findpatient,
+      patientId: findpatient._id
+     
     });
   } catch (error) {
     res.status(400).json({status:400, success: false, message: error.message });
@@ -203,7 +208,7 @@ const verifyOtp = async (req, res) => {
       return res.status(404).json({
         status: 404,
         success: false,
-        message: "patient not found",
+        message: "Patient not found",
       });
     }
 
@@ -222,14 +227,14 @@ const verifyOtp = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res.status(500).json({status:500, error: error.message });
   }
 };
 /* ----------------------------- reset password ----------------------------- */
 const resetPassword = async (req, res) => {
   try {
-    const { newPassword, confirmPassword, id } = req.body;
+    const { newPassword, confirmPassword, patientId } = req.body;
 
     // console.log(id);
 
@@ -240,13 +245,13 @@ const resetPassword = async (req, res) => {
         message: "New password and confirm password do not match.",
       });
     }
-    let patient = await Patient.findById(id);
+    let patient = await Patient.findById(patientId);
     // Checking if the user is in the database or not
     if (!patient) {
       return res.status(400).json({
         status: 400,
         success: false,
-        message: "User does not exist!",
+        message: "Patient does not exist!",
       });
     }
 
@@ -255,6 +260,7 @@ const resetPassword = async (req, res) => {
       success: true,
       message: "Password reset successfully!",
       data: patient,
+      patientId: patient._id,
     });
   } catch (error) {
     res.status(400).json({status:400, success: false, message: error.message });
@@ -295,9 +301,71 @@ const changePassword = async (req, res) => {
 
     return res
       .status(200)
-      .json({ status:200,success: true, message: "Password updated successfully" });
+      .json({ status:200,success: true, message: "Password updated successfully",patientId:patient.id,patient});
   } catch (error) {
     res.status(500).json({status:500,success: false, error: error.message });
+  }
+};
+
+const socialLogin = async (req, res) => {
+  try {
+    const { email, name, fcm_token } = req.body;
+
+    // Check if required fields are missing
+    if (!email || !name) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields.",
+      });
+    }
+
+    // Check if user with the same email already exists
+    let existingUser = await Patient.findOne({email});
+
+    // Prepare data for updating or creating doctor
+    const filter = {
+      email,
+      name,
+      fcm_token,
+    };
+
+    let statussocial; // Variable to hold statussocial value
+
+    if (existingUser) {
+      // Update existing user's fcm_token and token
+      filter.token = await jwt.sign({ email }, process.env.JWT_SECRET_KEY);
+      filter.refreshToken = await jwt.sign(
+        { email },
+        process.env.JWT_REFRESH_SECRET_KEY
+      );
+      existingUser = await Patient.findOne({ email });
+      statussocial = 0; // Existing user
+    } else {
+      // Create new user
+      filter.token = await jwt.sign({ email }, process.env.JWT_SECRET_KEY);
+      filter.refreshToken = await jwt.sign(
+        { email },
+        process.env.JWT_REFRESH_SECRET_KEY
+      );
+      existingUser = await Patient.create(filter);
+      statussocial = 1; // New user
+    }
+
+    // Respond with success message
+    res.status(200).json({
+      success: true,
+      message: existingUser
+        ? "Patient's details updated successfully"
+        : "New Patient created successfully",
+      status: 200,
+      data: existingUser,
+      patientId: existingUser._id,
+      refreshToken: filter.refreshToken, // Include refresh token in the response
+      statussocial: statussocial, // Include statussocial in the response
+    });
+  } catch (err) {
+    // Handle errors
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -307,6 +375,6 @@ module.exports = {
   verifyOtp,
   login,
   resetPassword,
-
+  socialLogin,
   changePassword,
 };

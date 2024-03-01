@@ -51,7 +51,7 @@ const createAppointment = async (req, res) => {
     }
     res.status(200).json({
       status:200,
-      message: "Successfully created a new appointment",
+      message: "Created a new appointment successfully",
       success: true,
       data: appointment,
     });
@@ -138,7 +138,7 @@ const updateAppointment = async (req, res) => {
     res.status(200).json({
       success: true,
       status: 200,
-      message: "update review and rating done",
+      message: "Update review and rating done",
       data: appointment,
     });
   } catch (error) {
@@ -161,7 +161,7 @@ const updateRescheduleAppointment = async (req, res) => {
     res.status(200).json({
       success: true,
       status: 200,
-      message: "update review and rating done",
+      message: "Update review and rating done",
       data: appointment,
     });
   } catch (error) {
