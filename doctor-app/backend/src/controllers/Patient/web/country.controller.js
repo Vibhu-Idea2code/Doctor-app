@@ -17,7 +17,7 @@ const createCountry = async (req, res) => {
 
     const country = await Country.create(reqbody);
     if (!country) {
-      return res.status(404).json({ message: "category data not found" });
+      return res.status(404).json({ message: "country data not found" });
     }
 
     res.status(200).json({

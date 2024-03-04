@@ -2,14 +2,11 @@
 const bcrypt = require("bcrypt");
 const moment = require("moment");
 const jwt = require("jsonwebtoken");
-const jwtSecrectKey = "cdccsvavsvfssbtybnjnuki";
-// const otpGenerator = require("otp-generator");
 const { doctorService, emailService } = require("../../../services");
 const { Doctor } = require("../../../models");
 const ejs = require("ejs");
 const path = require("path");
 
-/* ---------------------- NOTE :ALL DETAIL ABOUT ONLY DOCTOR --------------------- */
 /* -------------------------- REGISTER/CREATE DOCTOR -------------------------- */
 const register = async (req, res) => {
   try {
@@ -136,9 +133,6 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password, fcm_token } = req.body; // Assuming "identifier" can be either email or name
-    // const doctor = await Doctor.findOne({
-    //   $or: [{ email: identifier }, { name: identifier }],
-    // });
     const doctor = await Doctor.findOne({ email });
     if (!doctor) throw Error("Doctor Not Found");
 

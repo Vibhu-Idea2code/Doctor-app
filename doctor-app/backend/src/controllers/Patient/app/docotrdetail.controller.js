@@ -1,6 +1,4 @@
-const path = require("path");
-const fs = require("fs");
-const { doctorService } = require("../../../services");
+
 const { Doctor, AppointmentBook } = require("../../../models");
 
 const allDoctorListById = async (req, res) => {
@@ -43,8 +41,6 @@ const allDoctorListById = async (req, res) => {
   }
 };
 
-// const Doctor = require('./doctorModel'); // Assuming you have a Doctor model defined
-// const AppointmentBook = require('./appointmentBookModel');
 
 const doctorByIdDetails = async (req, res) => {
   try {
@@ -53,7 +49,6 @@ const doctorByIdDetails = async (req, res) => {
     const appointments = await AppointmentBook.find({
       doctorid: doctorId,
     }).populate("doctorid", "name specialist review rating");
-    // .select('review rating');
 
     if (!appointments) {
       throw new Error("No appointments found for this doctor!");

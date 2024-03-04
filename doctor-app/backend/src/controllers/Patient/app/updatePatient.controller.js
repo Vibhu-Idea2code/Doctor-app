@@ -19,7 +19,7 @@ const updatepatientProfile = async (req, res) => {
           "/../../../public/patientImag",
           user.image
         );
-        // console.log("imagePath:", imagePath); // Debug log
+       
         if (fs.existsSync(imagePath)) {
           fs.unlinkSync(imagePath);
           res.status(200).json({

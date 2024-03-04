@@ -1,13 +1,11 @@
-const mongoose = require("mongoose");
+
 const Help = require("../../../models/help.model");
 const ejs = require("ejs");
 const path = require("path");
 const {
   emailService,
-  doctorService,
-  patientService,
 } = require("../../../services");
-const { Patient, Doctor } = require("../../../models");
+const { Patient } = require("../../../models");
 
 /* ------------------------------- CREATE HELP WITH SEND EMAIL PATEINT  SIDE MANGE ------------------------------ */
 const createHelp = async (req, res) => {
@@ -17,9 +15,6 @@ const createHelp = async (req, res) => {
     if (!user) {
       throw new Error("Patient not found.");
     }
-
-    // Log the user object to see its contents
-    // console.log("User:", user);
 
     // Create a new help record
     const newHelp = await new Help({

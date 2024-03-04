@@ -1,7 +1,7 @@
 /* --------------------------- PATIENT HOME SCREEN -------------------------- */
 
-const { Doctor, Specialist, AppointmentBook, Patient } = require("../../../models");
-// const {successResponse}=require("../../../helpers/sendresponse")
+const { Doctor, Specialist, AppointmentBook } = require("../../../models");
+
 
 
 /* ----------------------------- All Doctor List Rating Wise Filter ----------------------------- */

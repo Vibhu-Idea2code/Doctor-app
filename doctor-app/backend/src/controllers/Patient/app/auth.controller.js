@@ -158,7 +158,6 @@ const forgotPass = async (req, res) => {
   try {
     const { email, name } = req.body;
     const findpatient = await patientService.findPatientByEmail(email);
-    // console.log(findpatient);
     if (!findpatient) throw Error("Patient not found");
     const otp = ("0".repeat(4) + Math.floor(Math.random() * 10 ** 4)).slice(-4);
     findpatient.otp = otp;
@@ -186,7 +185,6 @@ const forgotPass = async (req, res) => {
       status: 200,
       success: true,
       message: "Patient login successfully!",
-      // data: { data },
       data: `user otp is stored ${otp}`,
       findpatient,
       patientId: findpatient._id
@@ -227,7 +225,7 @@ const verifyOtp = async (req, res) => {
       });
     }
   } catch (error) {
-    // console.error(error);
+
     res.status(500).json({status:500, error: error.message });
   }
 };
@@ -235,8 +233,6 @@ const verifyOtp = async (req, res) => {
 const resetPassword = async (req, res) => {
   try {
     const { newPassword, confirmPassword, patientId } = req.body;
-
-    // console.log(id);
 
     if (newPassword !== confirmPassword) {
       return res.status(400).json({
@@ -272,11 +268,9 @@ const resetPassword = async (req, res) => {
 const changePassword = async (req, res) => {
   try {
     const { oldpass, newpass, confirmpass, patientId } = req.body; // assuming patientId is provided in the request body
-    // console.log(req.body, "++++++++++++++");
 
     // Find the patient by their ID
     const patient = await Patient.findById(patientId);
-    // console.log(patient, "++++++++++++++++++++++++++++++++");
     if (!patient) {
       return res.status(404).json({status:404,success:false, error: "Patient not found" });
     }

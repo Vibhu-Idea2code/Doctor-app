@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const Specialist = require("../../../models/speciality.model");
 
 /* ---------------------------- CREATE SPECIALIST --------------------------- */
@@ -8,7 +7,7 @@ const createspecialist = async (req, res) => {
     if (req.file) {
       reqBody.image = req.file.filename;
     }
-    // console.log(reqBody, "++++++specilalist");
+
     const specialist = await Specialist.create(reqBody);
     if (!specialist) { 
       throw new Error("no such specialist");

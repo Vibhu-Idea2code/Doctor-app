@@ -1,4 +1,4 @@
-const { Doctor, AppointmentBook } = require("../../../models");
+const {  AppointmentBook } = require("../../../models");
 const FavoriteDoctor = require("../../../models/favoritedoctor.model");
 
 /* -------------------- CREATE FAVORITE DOCTOR BY PATIENT ------------------- */
@@ -10,11 +10,11 @@ const createFavoriteDoctor = async (req, res) => {
     // Check if the doctor is already in the favorite list
     const existingFavorite = await FavoriteDoctor.findOne({
       doctorid: doctorId,
-    }); // Corrected field name
+    }); 
 
     if (existingFavorite) {
       // Remove favorite if it already exists
-      await FavoriteDoctor.findOneAndDelete({ doctorid: doctorId }); // Corrected field name
+      await FavoriteDoctor.findOneAndDelete({ doctorid: doctorId }); 
       res.status(200).json({
         status:200,
         message: "Successfully removed doctor from favorites",

@@ -1,8 +1,7 @@
 /* ------------------------------- DEFINE AREA ------------------------------ */
 const path = require("path");
 const fs = require("fs");
-const { doctorService } = require("../../../services");
-const { Doctor, AppointmentBook, Country } = require("../../../models");
+const { Doctor, Country } = require("../../../models");
 const deleteFiles =require("../../../helpers/deletefile");
 
 /* ------------------ NOTE : ALL DETAILS ABOUT DOCTOR  ------------------ */
@@ -18,15 +17,10 @@ const updateDocProfile = async (req, res) => {
         return res.status(401).json({status:401,success:false, message: "Doctor not found!"})
       }
       if (user && user.image) {
-        // Delete the existing image
         const imagePath = path.join(__dirname, "/../../../public/doctorImg", user.image);
-        // console.log("imagePath:", imagePath); // Debug log
         if (fs.existsSync(imagePath)) {
           fs.unlinkSync(imagePath);
-          // console.log("Existing image deleted successfully."); // Debug log
-        } else {
-          // console.log("Existing image not found at path:", imagePath); // Debug log
-        }
+        } 
       }
       reqbody.image = req.file.filename;
     }
@@ -52,7 +46,7 @@ const updateDocProfile = async (req, res) => {
       status: 200,
       success: true,
       updateData: isUpdate,
-      message: "update profile successfully",
+      message: "Update profile successfully",
     });
   } catch (err) {
     res.status(400).json({ success: false, error: err.message });
@@ -64,7 +58,7 @@ const deleteDoctor = async (req, res) => {
     const userData = await Doctor.findById(req.params.doctorId);
 
     if (!userData) {
-      return res.status(404).json({status:404,success:false, message: "User Data not found" });
+      return res.status(404).json({status:404,success:false, message: "Doctor Data not found" });
     }
     const DeletedData = await Doctor.findByIdAndDelete(req.params.doctorId, req.body, {
       new: true,

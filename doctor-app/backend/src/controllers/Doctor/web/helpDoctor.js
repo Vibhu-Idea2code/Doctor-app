@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 
 const ejs = require("ejs");
 const path = require("path");
@@ -15,10 +14,6 @@ const createHelp = async (req, res) => {
     if (!user) {
       throw new Error("Doctor not found.");
     }
-
-    // Log the user object to see its contents
-    // console.log("User:", user);
-
     // Create a new help record
     const newHelp = await new helpDoctor({
       doctorId: req.body.doctorId,

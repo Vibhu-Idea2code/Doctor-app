@@ -1,12 +1,10 @@
 /* --------------------------- PATIENT HOME SCREEN -------------------------- */
-
 const {
   Doctor,
   Specialist,
   AppointmentBook,
   Patient,
 } = require("../../../models");
-
 
 /* -------------- LIST PATIENT DATE WISE SHOW BY DOCTOR -------------- */
 const allPatientAppointmentList = async (req, res) => {
@@ -16,7 +14,7 @@ const allPatientAppointmentList = async (req, res) => {
     // Check if both doctorid and appointmentdate are provided in the request body
     if (!doctorid || !appointmentdate) {
       return res.status(404).json({
-        status:404,
+        status: 404,
         success: false,
         message:
           "Both doctorid and appointmentdate are required in the request body",
@@ -37,29 +35,29 @@ const allPatientAppointmentList = async (req, res) => {
 
     if (!userData || userData.length === 0) {
       return res.status(404).json({
-        status:404,
-        success:false,
+        status: 404,
+        success: false,
         message:
-          "User data not found for the provided doctorid and appointmentdate",
+          "Doctor data not found for the provided doctorid and appointmentdate",
       });
     }
 
     // Convert appointmentdate to "YYYY-MM-DD" format
     const formattedUserData = userData.map((data) => ({
       ...data._doc,
-      appointmentdate: data.appointmentdate.toISOString().split('T')[0],
+      appointmentdate: data.appointmentdate.toISOString().split("T")[0],
       appointmenttime: formatAppointmentTime(data.appointmenttime),
     }));
 
     res.status(200).json({
-      status:200,
+      status: 200,
       success: true,
-      message: "List of User Data successfully ",
+      message: "List of Doctor Data successfully ",
       user: formattedUserData,
     });
   } catch (error) {
     res.status(500).json({
-      status:500,
+      status: 500,
       success: false,
       message: error.message,
     });
@@ -69,7 +67,7 @@ function formatAppointmentTime(timeString) {
   const date = new Date(timeString);
   const hours = date.getHours();
   const minutes = date.getMinutes();
-  const ampm = hours >= 12 ? 'pm' : 'am';
+  const ampm = hours >= 12 ? "pm" : "am";
   const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
   const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
   return `${formattedHours}:${formattedMinutes}${ampm}`;
@@ -102,22 +100,22 @@ const PatientAppointmentList = async (req, res) => {
 
     if (!userData || userData.length === 0) {
       return res.status(404).json({
-        status:400,
-        success:false,
+        status: 400,
+        success: false,
         message:
-          "User data not found for the provided doctorid and appointmentdate",
+          "Doctor data not found for the provided doctorid and appointmentdate",
       });
     }
 
     res.status(200).json({
-      status:200,
+      status: 200,
       success: true,
-      message: "List of User Data successfully ",
+      message: "List of Doctor Data successfully ",
       user: userData,
     });
   } catch (error) {
     res.status(500).json({
-      status:500,
+      status: 500,
       success: false,
       message: error.message,
     });
@@ -133,7 +131,7 @@ const allPatientAppointmentListReview = async (req, res) => {
     if (!doctorid) {
       return res.status(400).json({
         status: 400,
-        success:false,
+        success: false,
         message:
           "Both doctorid and appointmentdate are required in the request body",
       });
@@ -154,21 +152,21 @@ const allPatientAppointmentListReview = async (req, res) => {
     if (!userData || userData.length === 0) {
       return res.status(404).json({
         status: 404,
-      success:fasle,
+        success: fasle,
         message:
-          "User data not found for the provided doctorid and appointmentdate",
+          "Doctor data not found for the provided doctorid and appointmentdate",
       });
     }
 
     res.status(200).json({
       status: 200,
       success: true,
-      message: "List of User Data successfully ",
+      message: "List of Doctor Data successfully ",
       user: userData,
     });
   } catch (error) {
     res.status(500).json({
-      status:500,
+      status: 500,
       success: false,
       message: error.message,
     });
@@ -191,8 +189,8 @@ const updateAppointmentByDoctor = async (req, res) => {
     // Assigning the exact date to the request body
     reqBody.appointmentdate = appointmentDate;
 
-     // Validate appointmenttime format
-     if (!/^\d{1,2}:\d{2}(am|pm)$/i.test(reqBody.appointmenttime)) {
+    // Validate appointmenttime format
+    if (!/^\d{1,2}:\d{2}(am|pm)$/i.test(reqBody.appointmenttime)) {
       throw new Error(
         "Invalid appointment time format. Please provide the time in 'HH:mm(am/pm)' format."
       );
@@ -209,59 +207,59 @@ const updateAppointmentByDoctor = async (req, res) => {
     }
 
     // Create a new Date object with the time
-    const appointmentTime =new Date(0, 0, 0, hours, minutes, 0, 0);
+    const appointmentTime = new Date(0, 0, 0, hours, minutes, 0, 0);
     appointmentTime.setUTCHours(hours, minutes, 0, 0);
-   // Set year, month, and day to 0
+    // Set year, month, and day to 0
 
     // Assign the exact time to the request body
     reqBody.appointmenttime = appointmentTime;
 
     const appointment = await AppointmentBook.findByIdAndUpdate(
-      reqBody.id,
+      reqBody.appointmentId,
       reqBody,
       { new: true }
     );
     if (!appointment) {
       return res
         .status(404)
-        .json({status:404, success: false, error: "Appointment not found" });
+        .json({ status: 404, success: false, error: "Appointment not found" });
     }
     res.status(200).json({
       success: true,
       status: 200,
-      message: "update review and rating done",
+      message: "Update review and rating successfully",
       data: appointment,
+      appointmentId: appointment._id
     });
   } catch (error) {
-    res.status(500).json({status:500, success: false, error: error.message });
+    res.status(500).json({ status: 500, success: false, error: error.message });
   }
 };
 
-  /* -------------- COMPLETE APPOINTMENT STATUS UPDATE BY DOCTOR -------------- */
+/* -------------- COMPLETE APPOINTMENT STATUS UPDATE BY DOCTOR -------------- */
 const updateAppointmentStatusByDoctor = async (req, res) => {
   try {
     const appointment = await AppointmentBook.findByIdAndUpdate(
-      req.body.id,
+      req.body.appointmentId,
       req.body,
       { new: true }
     );
     if (!appointment) {
       return res
         .status(404)
-        .json({status:404, success: false, error: "Appointment not found" });
+        .json({ status: 404, success: false, error: "Appointment not found" });
     }
     res.status(200).json({
       success: true,
       status: 200,
-      message: "update status done",
+      message: "Update status successfully",
       data: appointment,
+      appointmentId: appointment._id,
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 };
-
-
 
 /* ------------------------ SEARCH PATIENT BY DOCTOR ------------------------ */
 const searchPatientlist = async (req, res) => {
@@ -271,7 +269,7 @@ const searchPatientlist = async (req, res) => {
     // Check if query parameter is provided
     if (!query) {
       return res.status(404).json({
-        status:404,
+        status: 404,
         success: false,
         message: "Query parameter is missing.",
       });
@@ -284,7 +282,7 @@ const searchPatientlist = async (req, res) => {
 
     if (patients.length === 0) {
       return res.status(404).json({
-        status:404,
+        status: 404,
         success: false,
         message: "No patients found matching the query.",
       });
@@ -352,12 +350,13 @@ const searchDoctorSpecialist = async (req, res) => {
     });
   } catch (error) {
     // console.error("Error in searchDoctorSpecialist:", error);
-    res.status(500).json({status:500, success: false, error: "Internal Server Error" });
+    res
+      .status(500)
+      .json({ status: 500, success: false, error: "Internal Server Error" });
   }
 };
 
 module.exports = {
-  //   allDoctorList,
   allPatientAppointmentList,
   updateAppointmentByDoctor,
   searchDoctorSpecialist,
